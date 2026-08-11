@@ -291,6 +291,18 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
   border:1px solid rgba(167,139,250,.25);
 }
 .winner-line b{color:var(--gold)}
+.scenario-row{display:flex;flex-wrap:wrap;gap:8px}
+.scenario-chip{
+  padding:8px 16px;border-radius:99px;font-size:12.5px;color:var(--dim);cursor:pointer;user-select:none;
+  border:1px solid var(--panel-border);background:rgba(255,255,255,.04);transition:all .3s;
+}
+.scenario-chip:hover{color:#fff;border-color:rgba(103,232,249,.45);transform:translateY(-1px)}
+.scenario-chip.active{
+  color:#0b0e1a;font-weight:700;border-color:transparent;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));
+  box-shadow:0 0 18px rgba(103,232,249,.35);
+}
+.scenario-desc{font-size:11.5px;color:var(--dim);letter-spacing:.5px}
 
 /* ---------- 页脚 ---------- */
 footer{
@@ -377,7 +389,7 @@ footer a:hover{text-decoration:underline}
   <section id="compare">
     <div class="sec-tag reveal">Head to Head</div>
     <h2 class="sec-title reveal">巅峰对决 <span class="grad-text">1 v 1</span></h2>
-    <p class="sec-sub reveal">任选两个模型进行三维度雷达对比：智能、速度、成本效益（均已归一化）。缺失数据的维度按最低分处理。</p>
+    <p class="sec-sub reveal">任选两个模型进行三维度雷达对比：智能、速度、成本效益（均已归一化）。切换任务场景可改变综合战力的权重侧重——日常对话看重响应与价格，大型工程则智能至上。缺失数据的维度按最低分处理。</p>
     <div class="compare-panel reveal">
       <div class="vs-selectors">
         <div class="sel-block">
@@ -387,6 +399,11 @@ footer a:hover{text-decoration:underline}
         <div class="sel-block">
           <label>🅱 选手 B</label>
           <select id="sel-b"></select>
+        </div>
+        <div class="sel-block">
+          <label>⚖️ 任务场景（决定综合战力权重）</label>
+          <div class="scenario-row" id="scenario-row"></div>
+          <div class="scenario-desc" id="scenario-desc" style="margin-top:8px"></div>
         </div>
         <div class="vs-chip" id="chip-a" style="border-color:rgba(34,211,238,.4)"></div>
         <div class="vs-chip" id="chip-b" style="border-color:rgba(244,114,182,.4)"></div>
@@ -777,7 +794,33 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     m.speed ? m.speed/MAXS.speed : .04,
     m.cost != null ? Math.max(1 - Math.log10(m.cost/0.03)/Math.log10(3.14/0.03)*.92, .05) : .04
   ];
-  const overall = m => { const n = norm(m); return n[0]*.5 + n[1]*.2 + n[2]*.3; };
+  /* 任务场景权重：[智能, 速度, 成本效益] */
+  const SCENARIOS = {
+    '均衡通用': [.50, .20, .30],
+    '日常对话': [.30, .35, .35],
+    '大型工程': [.70, .10, .20],
+  };
+  let curScenario = '均衡通用';
+  const overall = m => {
+    const n = norm(m), w = SCENARIOS[curScenario];
+    return n[0]*w[0] + n[1]*w[1] + n[2]*w[2];
+  };
+  const wDesc = () => {
+    const w = SCENARIOS[curScenario];
+    return `智能 ${w[0]*100}% · 速度 ${w[1]*100}% · 成本 ${w[2]*100}%`;
+  };
+  const row = document.getElementById('scenario-row');
+  Object.keys(SCENARIOS).forEach(k => {
+    const b = document.createElement('button');
+    b.className = 'scenario-chip' + (k === curScenario ? ' active' : '');
+    b.textContent = k;
+    b.onclick = () => {
+      curScenario = k;
+      row.querySelectorAll('.scenario-chip').forEach(c => c.classList.toggle('active', c.textContent === k));
+      update();
+    };
+    row.appendChild(b);
+  });
 
   let cur = {a:[0,0,0], b:[0,0,0]}, target = {a:[0,0,0], b:[0,0,0]};
 
@@ -842,8 +885,10 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     chipA.innerHTML = `<span style="color:#22d3ee">🅰</span> ${A.name} <span style="color:var(--dim)">智能 ${A.intel} · ${A.speed?A.speed+' t/s':'速度—'} · ${A.cost!=null?'$'+A.cost.toFixed(2):'成本—'}</span><span class="cnum" style="color:#22d3ee">${(overall(A)*100).toFixed(0)}</span>`;
     chipB.innerHTML = `<span style="color:#f472b6">🅱</span> ${B.name} <span style="color:var(--dim)">智能 ${B.intel} · ${B.speed?B.speed+' t/s':'速度—'} · ${B.cost!=null?'$'+B.cost.toFixed(2):'成本—'}</span><span class="cnum" style="color:#f472b6">${(overall(B)*100).toFixed(0)}</span>`;
     const oa = overall(A), ob = overall(B);
-    winLine.innerHTML = oa === ob ? '⚖️ 两位选手<b>势均力敌</b>！'
-      : `🏆 综合战力 <b>${oa > ob ? A.name : B.name}</b> 胜出（${(Math.max(oa,ob)*100).toFixed(0)} vs ${(Math.min(oa,ob)*100).toFixed(0)}）`;
+    winLine.innerHTML = (oa === ob ? '⚖️ 两位选手<b>势均力敌</b>！'
+      : `🏆 综合战力 <b>${oa > ob ? A.name : B.name}</b> 胜出（${(Math.max(oa,ob)*100).toFixed(0)} vs ${(Math.min(oa,ob)*100).toFixed(0)}）`)
+      + `<div style="margin-top:6px;font-size:11.5px;color:var(--dim)">「${curScenario}」权重 · ${wDesc()}</div>`;
+    document.getElementById('scenario-desc').textContent = '当前权重：' + wDesc();
     requestAnimationFrame(tick);
   }
   selA.onchange = selB.onchange = update;
