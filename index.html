@@ -684,14 +684,43 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
       ctx.lineWidth = hovered && hovered.m === m ? 2.5 : 1.2;
       ctx.strokeStyle = c; ctx.stroke();
       ctx.restore();
-      if (r > 11 || hovered && hovered.m === m){
-        ctx.save();
-        ctx.globalAlpha = e * (hovered && hovered.m !== m ? .3 : .95);
-        ctx.fillStyle = '#e8ecf8'; ctx.font = '11px Noto Sans SC'; ctx.textAlign = 'center';
-        ctx.fillText(m.name.replace(/ \(.*\)/,''), x, y-r-8);
-        ctx.restore();
-      }
     });
+    /* 名称标签：全部显示 + 四方位防重叠 + 画布边界保护（悬停的气泡优先占位） */
+    const placed = [];
+    const ordered = hovered
+      ? [dots.find(d => d.m === hovered.m), ...dots.filter(d => d.m !== hovered.m)].filter(Boolean)
+      : dots;
+    ctx.save();
+    ctx.font = '10.5px Noto Sans SC';
+    for (const d of ordered){
+      if (d.r < 3) continue;
+      const label = d.m.name.replace(/ \(.*\)/, '');
+      const tw = ctx.measureText(label).width;
+      const cand = [
+        {ax:'center', ox:0,       oy:-d.r-7},
+        {ax:'center', ox:0,       oy: d.r+14},
+        {ax:'left',   ox: d.r+6,  oy: 3.5},
+        {ax:'right',  ox:-d.r-6,  oy: 3.5},
+      ];
+      for (const cnd of cand){
+        let tx = d.x + cnd.ox;
+        if (cnd.ax === 'center') tx = Math.max(64+tw/2, Math.min(W-44-tw/2, tx));
+        const ty = d.y + cnd.oy;
+        const bx = cnd.ax === 'left' ? tx : cnd.ax === 'right' ? tx-tw : tx-tw/2;
+        const rect = {x0:bx-3, x1:bx+tw+3, y0:ty-9, y1:ty+3};
+        if (rect.x0 < 56 || rect.x1 > W-38 || rect.y0 < 16 || rect.y1 > H-54) continue;
+        if (placed.some(q => rect.x0 < q.x1 && rect.x1 > q.x0 && rect.y0 < q.y1 && rect.y1 > q.y0)) continue;
+        placed.push(rect);
+        ctx.globalAlpha = hovered && hovered.m !== d.m ? .25 : .95;
+        ctx.textAlign = cnd.ax;
+        ctx.fillStyle = '#e8ecf8';
+        ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = 4;
+        ctx.fillText(label, tx, ty);
+        ctx.shadowBlur = 0;
+        break;
+      }
+    }
+    ctx.restore();
   }
   function animate(t){
     progress = Math.min(progress + .012, 1);
