@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Model Arena · 大模型巅峰对决</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060f;
+  --panel:rgba(255,255,255,.035);
+  --panel-border:rgba(255,255,255,.08);
+  --text:#e8ecf8;
+  --dim:#8b93b0;
+  --cyan:#22d3ee;
+  --violet:#a78bfa;
+  --pink:#f472b6;
+  --gold:#fbbf24;
+  --green:#34d399;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Sans SC',-apple-system,'PingFang SC',sans-serif;
+  overflow-x:hidden;
+  cursor:default;
+}
+::selection{background:rgba(167,139,250,.4)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:#0a0c1a}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--cyan),var(--violet));border-radius:5px}
+
+/* ---------- 背景层 ---------- */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.28;z-index:0;pointer-events:none;animation:orbFloat 18s ease-in-out infinite alternate}
+.orb1{width:520px;height:520px;background:#3b2d8f;top:-160px;left:-120px}
+.orb2{width:460px;height:460px;background:#0e5f6e;top:30%;right:-160px;animation-delay:-6s}
+.orb3{width:420px;height:420px;background:#7a2d6b;bottom:-140px;left:28%;animation-delay:-12s}
+@keyframes orbFloat{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(70px,50px) scale(1.15)}
+}
+#cursor-glow{
+  position:fixed;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(103,232,249,.07),transparent 60%);
+  pointer-events:none;z-index:1;transform:translate(-50%,-50%);
+  transition:opacity .3s;
+}
+.grid-overlay{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 75%);
+}
+
+/* ---------- 导航 ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 40px;
+  background:rgba(5,6,15,.55);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  transform:translateY(-100%);animation:navIn .8s .4s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes navIn{to{transform:translateY(0)}}
+.nav-logo{
+  font-family:'Orbitron',sans-serif;font-weight:900;font-size:18px;letter-spacing:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.nav-links{display:flex;gap:6px}
+.nav-links a{
+  color:var(--dim);text-decoration:none;font-size:13.5px;padding:8px 16px;border-radius:99px;
+  transition:all .3s;position:relative;
+}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.07);box-shadow:0 0 20px rgba(103,232,249,.15)}
+@media(max-width:860px){.nav-links{display:none}}
+
+/* ---------- 通用布局 ---------- */
+main{position:relative;z-index:2}
+section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
+.sec-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:3px;
+  color:var(--cyan);text-transform:uppercase;
+  padding:6px 16px;border:1px solid rgba(34,211,238,.3);border-radius:99px;
+  background:rgba(34,211,238,.06);margin-bottom:18px;
+}
+.sec-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sec-title{
+  font-size:clamp(30px,4.5vw,50px);font-weight:900;line-height:1.15;margin-bottom:12px;
+}
+.sec-sub{color:var(--dim);font-size:15px;max-width:640px;line-height:1.8;margin-bottom:44px}
+.grad-text{
+  background:linear-gradient(90deg,#67e8f9,#a78bfa 45%,#f472b6);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% 100%;animation:gradShift 5s linear infinite;
+}
+@keyframes gradShift{to{background-position:200% 0}}
+
+/* 滚动显现 */
+.reveal{opacity:0;transform:translateY(46px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:none}
+
+/* ---------- Hero ---------- */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding-top:120px;position:relative;
+}
+.hero-badge{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:4px;color:var(--dim);
+  border:1px solid var(--panel-border);border-radius:99px;padding:8px 22px;margin-bottom:30px;
+  background:var(--panel);opacity:0;animation:fadeUp 1s .2s forwards;
+}
+.hero-title{
+  font-family:'Orbitron','Noto Sans SC',sans-serif;
+  font-size:clamp(44px,8.5vw,104px);font-weight:900;letter-spacing:2px;line-height:1.05;
+  opacity:0;animation:fadeUp 1s .45s forwards;
+}
+.hero-title .line2{
+  background:linear-gradient(90deg,#67e8f9,#a78bfa 40%,#f472b6 75%,#fbbf24);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:250% 100%;animation:gradShift 6s linear infinite;
+  filter:drop-shadow(0 0 34px rgba(167,139,250,.45));
+}
+.hero-sub{
+  margin-top:26px;color:var(--dim);font-size:clamp(14px,1.6vw,17px);max-width:620px;line-height:2;
+  opacity:0;animation:fadeUp 1s .7s forwards;
+}
+.hero-sub b{color:var(--cyan);font-weight:500}
+@keyframes fadeUp{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:none}}
+.hero-stats{
+  display:flex;gap:18px;margin-top:52px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:fadeUp 1s .95s forwards;
+}
+.hstat{
+  min-width:150px;padding:20px 28px;border-radius:18px;
+  background:var(--panel);border:1px solid var(--panel-border);
+  backdrop-filter:blur(10px);transition:transform .35s,box-shadow .35s;
+}
+.hstat:hover{transform:translateY(-6px);box-shadow:0 14px 44px rgba(103,232,249,.14)}
+.hstat .num{font-family:'Orbitron',monospace;font-size:34px;font-weight:700;color:#fff}
+.hstat .num span{font-size:16px;color:var(--dim)}
+.hstat .lbl{font-size:12px;color:var(--dim);margin-top:6px;letter-spacing:1px}
+.scroll-hint{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  color:var(--dim);font-size:11px;letter-spacing:3px;text-align:center;
+  opacity:0;animation:fadeUp 1s 1.4s forwards;
+}
+.scroll-hint .mouse{
+  width:24px;height:38px;border:1.5px solid var(--dim);border-radius:14px;margin:0 auto 8px;position:relative;
+}
+.scroll-hint .mouse::after{
+  content:'';position:absolute;top:7px;left:50%;width:3px;height:8px;margin-left:-1.5px;
+  border-radius:3px;background:var(--cyan);animation:wheel 1.6s infinite;
+}
+@keyframes wheel{0%{opacity:1;transform:translateY(0)}70%{opacity:0;transform:translateY(12px)}100%{opacity:0}}
+
+/* ---------- 领奖台 ---------- */
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:20px;align-items:end;margin-bottom:64px}
+.pcard{
+  position:relative;border-radius:22px;padding:30px 26px;text-align:center;
+  background:var(--panel);border:1px solid var(--panel-border);
+  transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s;
+  transform-style:preserve-3d;overflow:hidden;
+}
+.pcard::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.09),transparent 45%);
+  opacity:0;transition:opacity .3s;
+}
+.pcard:hover::before{opacity:1}
+.pcard:hover{box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.pcard.first{
+  background:linear-gradient(160deg,rgba(251,191,36,.12),rgba(255,255,255,.03) 55%);
+  border-color:rgba(251,191,36,.4);
+  box-shadow:0 0 60px rgba(251,191,36,.12);
+  padding-bottom:44px;
+}
+.pcard .crown{font-size:30px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 12px rgba(251,191,36,.7))}
+.pcard .rank-badge{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--dim);margin-bottom:12px;
+}
+.pcard.first .rank-badge{color:var(--gold)}
+.pcard h3{font-size:19px;font-weight:700;margin-bottom:4px}
+.pcard .org{font-size:12px;color:var(--dim);margin-bottom:18px}
+.pcard .big-score{
+  font-family:'Orbitron',monospace;font-size:52px;font-weight:900;line-height:1;
+}
+.pcard.first .big-score{font-size:66px;color:var(--gold);text-shadow:0 0 30px rgba(251,191,36,.5)}
+.pcard .score-lbl{font-size:11px;color:var(--dim);letter-spacing:2px;margin-top:8px}
+.pcard .mini-bars{display:flex;gap:10px;justify-content:center;margin-top:18px}
+.pcard .mini{font-size:10.5px;color:var(--dim)}
+.pcard .mini b{display:block;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;margin-bottom:2px}
+@media(max-width:760px){.podium{grid-template-columns:1fr}}
+
+/* ---------- 条形榜 ---------- */
+.board{
+  border-radius:24px;background:var(--panel);border:1px solid var(--panel-border);
+  padding:34px 34px 22px;backdrop-filter:blur(12px);
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+}
+.brow{
+  display:grid;grid-template-columns:44px 300px 1fr 78px;align-items:center;gap:14px;
+  padding:9px 0;border-bottom:1px dashed rgba(255,255,255,.05);
+  transition:background .25s;border-radius:10px;
+}
+.brow:hover{background:rgba(255,255,255,.035)}
+.brow .rk{
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--dim);text-align:center;
+}
+.brow.top .rk{color:var(--gold);font-weight:700}
+.brow .mname{font-size:14px;font-weight:500;display:flex;align-items:center;gap:9px;min-width:0}
+.brow .mname .dot{width:9px;height:9px;border-radius:3px;flex:none;box-shadow:0 0 8px currentColor}
+.brow .mname .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brow .mname .orgtag{font-size:10px;color:var(--dim);flex:none}
+.brow .track{height:16px;border-radius:99px;background:rgba(255,255,255,.05);overflow:hidden;position:relative}
+.brow .fill{
+  height:100%;width:0;border-radius:99px;position:relative;
+  transition:width 1.3s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 0 16px currentColor;
+}
+.brow .fill::after{
+  content:'';position:absolute;inset:0;border-radius:99px;
+  background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);
+  background-size:200% 100%;animation:shimmer 2.4s linear infinite;
+}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.brow .val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;text-align:right}
+.board .note{font-size:11.5px;color:var(--dim);margin-top:16px;letter-spacing:.5px}
+@media(max-width:760px){
+  .brow{grid-template-columns:30px 1fr 64px;grid-template-rows:auto auto}
+  .brow .track{grid-column:1/-1}
+  .board{padding:22px 18px 14px}
+}
+
+/* ---------- 散点图 ---------- */
+.chart-wrap{
+  position:relative;border-radius:24px;background:var(--panel);border:1px solid var(--panel-border);
+  padding:26px;backdrop-filter:blur(12px);box-shadow:0 30px 80px rgba(0,0,0,.35);
+}
+#scatter{width:100%;height:560px;display:block}
+#tooltip{
+  position:absolute;pointer-events:none;opacity:0;transition:opacity .2s;
+  background:rgba(10,12,26,.92);border:1px solid rgba(255,255,255,.14);border-radius:14px;
+  padding:14px 18px;font-size:12.5px;line-height:1.9;backdrop-filter:blur(8px);
+  box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:10;min-width:180px;
+}
+#tooltip .tt-name{font-weight:700;font-size:14px;margin-bottom:4px}
+#tooltip .tt-row{display:flex;justify-content:space-between;gap:20px;color:var(--dim)}
+#tooltip .tt-row b{color:var(--text);font-family:'JetBrains Mono',monospace}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;padding:0 6px}
+.legend .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--dim)}
+.legend .li i{width:10px;height:10px;border-radius:3px;display:inline-block;box-shadow:0 0 8px currentColor}
+
+/* ---------- 对比 ---------- */
+.compare-panel{
+  border-radius:24px;background:var(--panel);border:1px solid var(--panel-border);
+  padding:36px;backdrop-filter:blur(12px);box-shadow:0 30px 80px rgba(0,0,0,.35);
+  display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;
+}
+@media(max-width:900px){.compare-panel{grid-template-columns:1fr}}
+.vs-selectors{display:flex;flex-direction:column;gap:20px}
+.sel-block label{font-size:12px;letter-spacing:2px;color:var(--dim);display:block;margin-bottom:8px}
+.sel-block select{
+  width:100%;padding:14px 18px;border-radius:14px;font-size:15px;color:var(--text);
+  background:rgba(255,255,255,.05);border:1px solid var(--panel-border);outline:none;
+  font-family:inherit;cursor:pointer;transition:border-color .3s,box-shadow .3s;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b93b0' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;
+}
+.sel-block select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+.sel-block select option{background:#0d1022;color:var(--text)}
+.vs-chip{
+  display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;
+  border:1px solid;font-size:13px;line-height:1.7;
+}
+.vs-chip .cnum{font-family:'Orbitron',monospace;font-size:26px;font-weight:700;margin-left:auto}
+#radar{width:100%;height:440px;display:block}
+.winner-line{
+  text-align:center;font-size:15px;padding:14px;border-radius:14px;margin-top:4px;
+  background:linear-gradient(90deg,rgba(34,211,238,.08),rgba(167,139,250,.08));
+  border:1px solid rgba(167,139,250,.25);
+}
+.winner-line b{color:var(--gold)}
+
+/* ---------- 页脚 ---------- */
+footer{
+  position:relative;z-index:2;text-align:center;padding:70px 20px 46px;color:var(--dim);font-size:12.5px;line-height:2;
+}
+footer a{color:var(--cyan);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.footer-line{width:min(600px,80%);height:1px;margin:0 auto 34px;background:linear-gradient(90deg,transparent,rgba(167,139,250,.5),transparent)}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="grid-overlay"></div>
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+<div id="cursor-glow"></div>
+
+<nav>
+  <div class="nav-logo">AI&nbsp;MODEL&nbsp;ARENA</div>
+  <div class="nav-links">
+    <a href="#intelligence">智能指数</a>
+    <a href="#speed">生成速度</a>
+    <a href="#cost">任务成本</a>
+    <a href="#scatter-sec">性价比象限</a>
+    <a href="#compare">巅峰对决</a>
+  </div>
+</nav>
+
+<main>
+  <!-- ================= HERO ================= -->
+  <section id="hero">
+    <div class="hero-badge">DATA SOURCE · ARTIFICIAL ANALYSIS · INTELLIGENCE INDEX v4.1.1</div>
+    <h1 class="hero-title">大模型<br><span class="line2">巅峰竞技场</span></h1>
+    <p class="hero-sub">基于 Artificial Analysis 独立评测体系（GDPval-AA v2、τ³-Banking、Terminal-Bench v2.1、SciCode、HLE、GPQA Diamond、CritPt 等 <b>9 项权威评测</b>），全方位透视 <b>27 家厂商 41 个代表模型</b> 的智能、速度与成本差异。</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="num" data-count="41">0</div><div class="lbl">参评模型</div></div>
+      <div class="hstat"><div class="num" data-count="27">0</div><div class="lbl">覆盖厂商</div></div>
+      <div class="hstat"><div class="num" data-count="63">0</div><div class="lbl">最高智能指数</div></div>
+      <div class="hstat"><div class="num" data-count="235">0<span> t/s</span></div><div class="lbl">最快输出速度</div></div>
+    </div>
+    <div class="scroll-hint"><div class="mouse"></div>SCROLL</div>
+  </section>
+
+  <!-- ================= 智能指数 ================= -->
+  <section id="intelligence">
+    <div class="sec-tag reveal">Intelligence Index</div>
+    <h2 class="sec-title reveal">智能指数 <span class="grad-text">排行榜</span></h2>
+    <p class="sec-sub reveal">Artificial Analysis Intelligence Index v4.1.1，综合 9 项评测，分数越高越聪明。前三名登上领奖台。</p>
+
+    <div class="podium reveal" id="podium"></div>
+
+    <div class="board reveal" id="intel-board"></div>
+  </section>
+
+  <!-- ================= 速度 ================= -->
+  <section id="speed">
+    <div class="sec-tag reveal">Output Speed</div>
+    <h2 class="sec-title reveal">生成速度 <span class="grad-text">竞速榜</span></h2>
+    <p class="sec-sub reveal">每秒输出 Token 数（越高越快）。Gemini 3.6 Flash 以 235 t/s 一骑绝尘，是 Claude Opus 5 的 4 倍以上。</p>
+    <div class="board reveal" id="speed-board"></div>
+  </section>
+
+  <!-- ================= 成本 ================= -->
+  <section id="cost">
+    <div class="sec-tag reveal">Cost per Task</div>
+    <h2 class="sec-title reveal">单任务成本 <span class="grad-text">省钱榜</span></h2>
+    <p class="sec-sub reveal">完成一个智能指数任务的加权平均成本（美元，越低越好）。DeepSeek V4 Flash 仅需 $0.03，而 Claude Fable 5 高达 $3.14 —— 相差超 100 倍。</p>
+    <div class="board reveal" id="cost-board"></div>
+  </section>
+
+  <!-- ================= 散点图 ================= -->
+  <section id="scatter-sec">
+    <div class="sec-tag reveal">Intelligence × Cost</div>
+    <h2 class="sec-title reveal">智能 × 成本 <span class="grad-text">性价比象限</span></h2>
+    <p class="sec-sub reveal">横轴为单任务成本（对数刻度），纵轴为智能指数，气泡大小代表输出速度。越靠 <b style="color:var(--green)">左上</b> 越「又聪明又便宜」，虚线为性价比前沿（Pareto Frontier）。悬停气泡查看详情。</p>
+    <div class="chart-wrap reveal">
+      <canvas id="scatter"></canvas>
+      <div id="tooltip"></div>
+      <div class="legend" id="scatter-legend"></div>
+    </div>
+  </section>
+
+  <!-- ================= 对比 ================= -->
+  <section id="compare">
+    <div class="sec-tag reveal">Head to Head</div>
+    <h2 class="sec-title reveal">巅峰对决 <span class="grad-text">1 v 1</span></h2>
+    <p class="sec-sub reveal">任选两个模型进行三维度雷达对比：智能、速度、成本效益（均已归一化）。缺失数据的维度按最低分处理。</p>
+    <div class="compare-panel reveal">
+      <div class="vs-selectors">
+        <div class="sel-block">
+          <label>🅰 选手 A</label>
+          <select id="sel-a"></select>
+        </div>
+        <div class="sel-block">
+          <label>🅱 选手 B</label>
+          <select id="sel-b"></select>
+        </div>
+        <div class="vs-chip" id="chip-a" style="border-color:rgba(34,211,238,.4)"></div>
+        <div class="vs-chip" id="chip-b" style="border-color:rgba(244,114,182,.4)"></div>
+        <div class="winner-line" id="winner-line"></div>
+      </div>
+      <canvas id="radar"></canvas>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-line"></div>
+  数据来源：<a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">Artificial Analysis</a> · Intelligence Index v4.1.1（2026 年 8 月快照）<br>
+  本页面仅用于数据可视化演示 · 评分为第三方独立评测结果，仅供参考
+</footer>
+
+<script>
+/* ==================== 数据 ==================== */
+const ORG_COLORS = {
+  'Anthropic':'#f97362','OpenAI':'#34d399','Google':'#60a5fa','DeepSeek':'#818cf8',
+  'Moonshot AI':'#f472b6','xAI':'#e2e8f0','Zhipu AI':'#22d3ee','Meta':'#a78bfa',
+  'MiniMax':'#fbbf24','Alibaba':'#fb923c','Xiaomi':'#fb7185','Thinking Machines':'#4ade80',
+  'NVIDIA':'#a3e635','Mistral':'#f97316','Cohere':'#c084fc','Motif':'#fda4af',
+  'Agnes AI':'#e879f9','InclusionAI':'#2dd4bf','Meituan':'#facc15','StepFun':'#38bdf8',
+  'ByteDance':'#f43f5e','Baidu':'#93c5fd','Inception':'#a7f3d0','LG AI':'#d946ef',
+  'Amazon':'#ff9f1c','IBM':'#2563eb','Microsoft':'#00b4d8'
+};
+/* 数据：Artificial Analysis Intelligence Index v4.1.1（2026-08 快照）
+   每家厂商精选 2-3 个代表模型 · speed 单位 t/s · cost 单位 USD/任务 · null 为官方未公布 */
+const MODELS = [
+  /* Anthropic */
+  {name:'Claude Opus 5 (max)',        org:'Anthropic',        intel:63, speed:56,  cost:2.34},
+  {name:'Claude Fable 5',             org:'Anthropic',        intel:62, speed:67,  cost:3.14},
+  {name:'Claude Sonnet 5 (max)',      org:'Anthropic',        intel:55, speed:null,cost:null},
+  /* OpenAI */
+  {name:'GPT-5.6 Sol (max)',          org:'OpenAI',           intel:61, speed:68,  cost:1.23},
+  {name:'GPT-5.6 Terra (max)',        org:'OpenAI',           intel:57, speed:null,cost:null},
+  {name:'GPT-5.5 (xhigh)',            org:'OpenAI',           intel:56, speed:null,cost:null},
+  /* Moonshot AI */
+  {name:'Kimi K3 (max)',              org:'Moonshot AI',      intel:60, speed:44,  cost:0.84},
+  {name:'Kimi K2.7 Code',             org:'Moonshot AI',      intel:43, speed:null,cost:null},
+  /* Alibaba */
+  {name:'Qwen3.8 Max',                org:'Alibaba',          intel:58, speed:null,cost:null},
+  {name:'Qwen3.7 Max',                org:'Alibaba',          intel:47, speed:null,cost:null},
+  /* Meta */
+  {name:'Muse Spark 1.2 (xhigh)',     org:'Meta',             intel:57, speed:null,cost:0.40},
+  {name:'Llama 4 Maverick',           org:'Meta',             intel:14, speed:null,cost:null},
+  /* xAI */
+  {name:'Grok 4.5 (high)',            org:'xAI',              intel:56, speed:58,  cost:0.36},
+  {name:'Grok 4.1 Fast',              org:'xAI',              intel:31, speed:null,cost:null},
+  /* Zhipu AI */
+  {name:'GLM-5.2 (max)',              org:'Zhipu AI',         intel:53, speed:142, cost:0.31},
+  {name:'GLM-4.7',                    org:'Zhipu AI',         intel:34, speed:null,cost:null},
+  /* DeepSeek */
+  {name:'DeepSeek V4 Flash 0731',     org:'DeepSeek',         intel:52, speed:130, cost:0.03},
+  {name:'DeepSeek V4 Pro (max)',      org:'DeepSeek',         intel:45, speed:null,cost:null},
+  {name:'DeepSeek R1 0528',           org:'DeepSeek',         intel:20, speed:null,cost:null},
+  /* Google */
+  {name:'Gemini 3.6 Flash',           org:'Google',           intel:52, speed:235, cost:0.56},
+  {name:'Gemini 3 Pro Preview',       org:'Google',           intel:41, speed:null,cost:null},
+  {name:'Gemma 4 31B',                org:'Google',           intel:30, speed:null,cost:null},
+  /* MiniMax */
+  {name:'MiniMax-M3',                 org:'MiniMax',          intel:45, speed:94,  cost:0.14},
+  {name:'MiniMax-M2.7',               org:'MiniMax',          intel:39, speed:null,cost:null},
+  /* Motif */
+  {name:'Motif 3 (Beta)',             org:'Motif',            intel:45, speed:null,cost:null},
+  /* Xiaomi */
+  {name:'MiMo-V2.5-Pro',              org:'Xiaomi',           intel:43, speed:null,cost:null},
+  /* Thinking Machines */
+  {name:'Inkling',                    org:'Thinking Machines',intel:42, speed:null,cost:null},
+  /* Agnes AI */
+  {name:'Agnes 2.5 Pro Alpha',        org:'Agnes AI',         intel:40, speed:null,cost:null},
+  /* InclusionAI / NVIDIA */
+  {name:'Ling 3.0 Flash',             org:'InclusionAI',      intel:38, speed:null,cost:null},
+  {name:'Nemotron 3 Ultra',           org:'NVIDIA',           intel:38, speed:171, cost:0.38},
+  /* Meituan / StepFun */
+  {name:'LongCat 2.0',                org:'Meituan',          intel:34, speed:null,cost:null},
+  {name:'Step 3.7 Flash',             org:'StepFun',          intel:31, speed:null,cost:null},
+  /* Mistral */
+  {name:'Mistral Medium 3.5',         org:'Mistral',          intel:30, speed:null,cost:null},
+  {name:'Mistral Large 3',            org:'Mistral',          intel:16, speed:null,cost:null},
+  /* ByteDance / Cohere / Baidu */
+  {name:'Doubao Seed Code',           org:'ByteDance',        intel:26, speed:null,cost:null},
+  {name:'Command A+',                 org:'Cohere',           intel:23, speed:null,cost:null},
+  {name:'ERNIE 5.0 Thinking',         org:'Baidu',            intel:22, speed:null,cost:null},
+  /* Inception / LG / Amazon / IBM / Microsoft */
+  {name:'Mercury 2',                  org:'Inception',        intel:22, speed:null,cost:null},
+  {name:'EXAONE 4.5 33B',             org:'LG AI',            intel:21, speed:null,cost:null},
+  {name:'Nova 2.0 Pro Preview',       org:'Amazon',           intel:14, speed:null,cost:null},
+  {name:'Granite 4.1 30B',            org:'IBM',              intel:9,  speed:null,cost:null},
+  {name:'Phi-4',                      org:'Microsoft',        intel:5,  speed:null,cost:null},
+];
+const colorOf = m => ORG_COLORS[m.org] || '#94a3b8';
+
+/* ==================== 背景粒子 ==================== */
+(() => {
+  const cv = document.getElementById('bg-canvas'), ctx = cv.getContext('2d');
+  let W, H, pts = [], mouse = {x:-9999, y:-9999};
+  const N = 90, LINK = 130;
+  function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  for (let i = 0; i < N; i++) pts.push({
+    x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+    vx: (Math.random()-.5)*.35, vy: (Math.random()-.5)*.35,
+    r: Math.random()*1.8+.6, hue: Math.random()>.5 ? 190 : 265
+  });
+  (function tick(){
+    ctx.clearRect(0,0,W,H);
+    for (const p of pts){
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      const dm = Math.hypot(p.x-mouse.x, p.y-mouse.y);
+      if (dm < 140){ p.x += (p.x-mouse.x)/dm*.6; p.y += (p.y-mouse.y)/dm*.6; }
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7);
+      ctx.fillStyle = `hsla(${p.hue},85%,72%,.55)`; ctx.fill();
+    }
+    for (let i = 0; i < N; i++) for (let j = i+1; j < N; j++){
+      const a = pts[i], b = pts[j], d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d < LINK){
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle = `rgba(140,160,255,${(1-d/LINK)*.14})`; ctx.lineWidth = 1; ctx.stroke();
+      }
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
+
+/* 鼠标辉光 */
+(() => {
+  const g = document.getElementById('cursor-glow');
+  addEventListener('mousemove', e => { g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; });
+})();
+
+/* ==================== 数字滚动 ==================== */
+function countUp(el, target, dur = 1600){
+  const t0 = performance.now();
+  (function f(t){
+    const p = Math.min((t-t0)/dur, 1), e = 1-Math.pow(1-p, 4);
+    el.childNodes[0].nodeValue = Math.round(target*e);
+    if (p < 1) requestAnimationFrame(f);
+  })(t0);
+}
+document.querySelectorAll('.hstat .num').forEach(el => {
+  setTimeout(() => countUp(el, +el.dataset.count), 1100);
+});
+
+/* ==================== 滚动显现 ==================== */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){
+    e.target.classList.add('visible');
+    e.target.querySelectorAll('.fill').forEach((f, i) =>
+      setTimeout(() => f.style.width = f.dataset.w + '%', i*45));
+    io.unobserve(e.target);
+  }
+}), {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ==================== 领奖台 ==================== */
+(() => {
+  const top3 = [...MODELS].sort((a,b) => b.intel-a.intel).slice(0,3);
+  const order = [1,0,2], crowns = ['🥇','🥈','🥉'], pod = document.getElementById('podium');
+  order.forEach(idx => {
+    const m = top3[idx], first = idx === 0;
+    pod.insertAdjacentHTML('beforeend', `
+      <div class="pcard ${first?'first':''}">
+        ${first?'<span class="crown">👑</span>':''}
+        <div class="rank-badge">${crowns[idx]} RANK #${idx+1}</div>
+        <h3>${m.name}</h3><div class="org">${m.org}</div>
+        <div class="big-score" style="color:${first?'':'#fff'}">${m.intel}</div>
+        <div class="score-lbl">INTELLIGENCE INDEX</div>
+        <div class="mini-bars">
+          <div class="mini"><b>${m.speed??'—'}</b>t/s 速度</div>
+          <div class="mini"><b>${m.cost!=null?'$'+m.cost:'—'}</b>单任务成本</div>
+        </div>
+      </div>`);
+  });
+  /* 3D 倾斜 */
+  pod.querySelectorAll('.pcard').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX-r.left)/r.width, y = (e.clientY-r.top)/r.height;
+      card.style.setProperty('--mx', x*100+'%'); card.style.setProperty('--my', y*100+'%');
+      card.style.transform = `perspective(800px) rotateY(${(x-.5)*10}deg) rotateX(${(.5-y)*8}deg) translateY(-6px)`;
+    });
+    card.addEventListener('mouseleave', () => card.style.transform = '');
+  });
+})();
+
+/* ==================== 条形榜 ==================== */
+function buildBoard(el, data, getVal, max, fmt, lowerBetter){
+  const sorted = [...data].sort((a,b) => lowerBetter ? getVal(a)-getVal(b) : getVal(b)-getVal(a));
+  sorted.forEach((m, i) => {
+    const c = colorOf(m), pct = Math.max(getVal(m)/max*100, 2.5);
+    el.insertAdjacentHTML('beforeend', `
+      <div class="brow ${i<3?'top':''}">
+        <div class="rk">${String(i+1).padStart(2,'0')}</div>
+        <div class="mname">
+          <span class="dot" style="background:${c};color:${c}"></span>
+          <span class="nm">${m.name}</span><span class="orgtag">${m.org}</span>
+        </div>
+        <div class="track"><div class="fill" data-w="${pct}"
+          style="background:linear-gradient(90deg,${c}55,${c});color:${c}"></div></div>
+        <div class="val" style="color:${c}">${fmt(getVal(m))}</div>
+      </div>`);
+  });
+}
+buildBoard(document.getElementById('intel-board'), MODELS, m => m.intel, 63, v => v, false);
+document.getElementById('intel-board').insertAdjacentHTML('beforeend',
+  '<div class="note">💡 每家厂商精选 2-3 个代表模型 · 涵盖推理与非推理模型 · 智能指数越高越好</div>');
+buildBoard(document.getElementById('speed-board'), MODELS.filter(m => m.speed), m => m.speed, 235, v => v+' t/s', false);
+document.getElementById('speed-board').insertAdjacentHTML('beforeend',
+  '<div class="note">⚡ 仅展示官方公布速度数据的模型 · 每秒输出 Token 数越高越好</div>');
+buildBoard(document.getElementById('cost-board'), MODELS.filter(m => m.cost != null), m => m.cost, 3.14, v => '$'+v.toFixed(2), true);
+document.getElementById('cost-board').insertAdjacentHTML('beforeend',
+  '<div class="note">💰 仅展示官方公布成本数据的模型 · 单任务成本越低越好（条形按相对比例展示）</div>');
+
+/* ==================== 散点图 ==================== */
+(() => {
+  const cv = document.getElementById('scatter'), ctx = cv.getContext('2d');
+  const tip = document.getElementById('tooltip');
+  const pts = MODELS.filter(m => m.cost != null);
+  const XMIN = Math.log10(0.02), XMAX = Math.log10(4), YMIN = 15, YMAX = 68;
+  let W, H, dpr, dots = [], progress = 0, hovered = null, raf;
+
+  function resize(){
+    dpr = devicePixelRatio || 1;
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = W*dpr; cv.height = H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  const px = c => 60 + (Math.log10(c)-XMIN)/(XMAX-XMIN)*(W-100);
+  const py = v => 24 + (1-(v-YMIN)/(YMAX-YMIN))*(H-80);
+
+  /* Pareto 前沿（成本升序中智能创新高者） */
+  const pareto = [...pts].sort((a,b) => a.cost-b.cost)
+    .filter((m, _, arr) => m.intel >= Math.max(...arr.filter(x => x.cost <= m.cost).map(x => x.intel)));
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    /* 网格 */
+    ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(139,147,176,.75)'; ctx.font = '11px JetBrains Mono';
+    [0.03,0.1,0.3,1,3].forEach(c => {
+      const x = px(c);
+      ctx.beginPath(); ctx.moveTo(x,24); ctx.lineTo(x,H-56); ctx.stroke();
+      ctx.textAlign = 'center'; ctx.fillText('$'+c, x, H-38);
+    });
+    [20,30,40,50,60].forEach(v => {
+      const y = py(v);
+      ctx.beginPath(); ctx.moveTo(60,y); ctx.lineTo(W-40,y); ctx.stroke();
+      ctx.textAlign = 'right'; ctx.fillText(v, 48, y+4);
+    });
+    ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(139,147,176,.9)';
+    ctx.fillText('单任务成本（USD，对数刻度）→', (W+60)/2-20, H-14);
+    ctx.save(); ctx.translate(16,(H-32)/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('智能指数 →', 0, 0); ctx.restore();
+
+    const ease = 1-Math.pow(1-progress, 3);
+
+    /* Pareto 前沿 */
+    if (progress > .55){
+      ctx.save();
+      ctx.setLineDash([7,7]); ctx.lineWidth = 2;
+      ctx.strokeStyle = `rgba(52,211,153,${(progress-.55)/.45*.8})`;
+      ctx.shadowColor = 'rgba(52,211,153,.5)'; ctx.shadowBlur = 10;
+      ctx.beginPath();
+      pareto.forEach((m,i) => i ? ctx.lineTo(px(m.cost),py(m.intel)) : ctx.moveTo(px(m.cost),py(m.intel)));
+      ctx.stroke(); ctx.restore();
+      if (progress > .9){
+        ctx.fillStyle = 'rgba(52,211,153,.9)'; ctx.font = '11px Noto Sans SC'; ctx.textAlign='left';
+        ctx.fillText('— 性价比前沿', px(0.09), py(63));
+      }
+    }
+
+    /* 气泡 */
+    dots = [];
+    pts.forEach((m, i) => {
+      const delay = i/pts.length*.5;
+      const p = Math.max(0, Math.min((progress-delay)/.5, 1));
+      if (p <= 0) return;
+      const e = 1-Math.pow(1-p, 3);
+      const x = px(m.cost), y = py(m.intel) + (1-e)*40;
+      const r = (m.speed ? 7 + m.speed/235*17 : 9) * e;
+      const c = colorOf(m);
+      dots.push({x, y, r, m});
+      ctx.save();
+      ctx.globalAlpha = e * (hovered && hovered.m !== m ? .3 : 1);
+      ctx.shadowColor = c; ctx.shadowBlur = hovered && hovered.m === m ? 26 : 13;
+      const g = ctx.createRadialGradient(x-r*.3, y-r*.3, r*.1, x, y, r);
+      g.addColorStop(0, c+'ee'); g.addColorStop(1, c+'44');
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 7);
+      ctx.fillStyle = g; ctx.fill();
+      ctx.lineWidth = hovered && hovered.m === m ? 2.5 : 1.2;
+      ctx.strokeStyle = c; ctx.stroke();
+      ctx.restore();
+      if (r > 11 || hovered && hovered.m === m){
+        ctx.save();
+        ctx.globalAlpha = e * (hovered && hovered.m !== m ? .3 : .95);
+        ctx.fillStyle = '#e8ecf8'; ctx.font = '11px Noto Sans SC'; ctx.textAlign = 'center';
+        ctx.fillText(m.name.replace(/ \(.*\)/,''), x, y-r-8);
+        ctx.restore();
+      }
+    });
+  }
+  function animate(t){
+    progress = Math.min(progress + .012, 1);
+    draw();
+    if (progress < 1) raf = requestAnimationFrame(animate);
+  }
+  const so = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ resize(); animate(); so.disconnect(); }
+  }), {threshold:.25});
+  so.observe(cv);
+  addEventListener('resize', () => { resize(); draw(); });
+
+  cv.addEventListener('mousemove', e => {
+    const r = cv.getBoundingClientRect(), mx = e.clientX-r.left, my = e.clientY-r.top;
+    hovered = dots.find(d => Math.hypot(d.x-mx, d.y-my) < d.r+4) || null;
+    cv.style.cursor = hovered ? 'pointer' : 'default';
+    if (hovered){
+      const m = hovered.m;
+      tip.style.opacity = 1;
+      tip.style.left = Math.min(hovered.x+22, W-220)+'px';
+      tip.style.top = Math.max(hovered.y-30, 8)+'px';
+      tip.innerHTML = `<div class="tt-name" style="color:${colorOf(m)}">${m.name}</div>
+        <div class="tt-row"><span>厂商</span><b>${m.org}</b></div>
+        <div class="tt-row"><span>智能指数</span><b>${m.intel}</b></div>
+        <div class="tt-row"><span>输出速度</span><b>${m.speed?m.speed+' t/s':'—'}</b></div>
+        <div class="tt-row"><span>单任务成本</span><b>$${m.cost.toFixed(2)}</b></div>`;
+    } else tip.style.opacity = 0;
+    if (progress >= 1) draw();
+  });
+  cv.addEventListener('mouseleave', () => { hovered = null; tip.style.opacity = 0; if (progress >= 1) draw(); });
+
+  /* 图例 */
+  const orgs = [...new Set(pts.map(m => m.org))];
+  document.getElementById('scatter-legend').innerHTML = orgs.map(o =>
+    `<span class="li"><i style="background:${ORG_COLORS[o]};color:${ORG_COLORS[o]}"></i>${o}</span>`).join('');
+})();
+
+/* ==================== 1v1 雷达对比 ==================== */
+(() => {
+  const selA = document.getElementById('sel-a'), selB = document.getElementById('sel-b');
+  MODELS.forEach((m, i) => {
+    selA.add(new Option(`${m.name} · ${m.org}`, i));
+    selB.add(new Option(`${m.name} · ${m.org}`, i));
+  });
+  selA.value = 0; selB.value = MODELS.findIndex(m => m.name === 'Gemini 3.6 Flash');
+
+  const cv = document.getElementById('radar'), ctx = cv.getContext('2d');
+  const chipA = document.getElementById('chip-a'), chipB = document.getElementById('chip-b'),
+        winLine = document.getElementById('winner-line');
+  const AXES = ['智能', '速度', '成本效益'];
+  const MAXS = {intel:63, speed:235};
+  const norm = m => [
+    m.intel/MAXS.intel,
+    m.speed ? m.speed/MAXS.speed : .04,
+    m.cost != null ? Math.max(1 - Math.log10(m.cost/0.03)/Math.log10(3.14/0.03)*.92, .05) : .04
+  ];
+  const overall = m => { const n = norm(m); return n[0]*.5 + n[1]*.2 + n[2]*.3; };
+
+  let cur = {a:[0,0,0], b:[0,0,0]}, target = {a:[0,0,0], b:[0,0,0]};
+
+  function draw(){
+    const dpr = devicePixelRatio||1, W = cv.clientWidth, H = cv.clientHeight;
+    if (cv.width !== W*dpr){ cv.width = W*dpr; cv.height = H*dpr; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    const cx = W/2, cy = H/2+8, R = Math.min(W,H)/2 - 62;
+    const pt = (i, v) => {
+      const ang = -Math.PI/2 + i*2*Math.PI/3;
+      return [cx + Math.cos(ang)*R*v, cy + Math.sin(ang)*R*v];
+    };
+    /* 网格 */
+    for (let ring = 1; ring <= 4; ring++){
+      ctx.beginPath();
+      for (let i = 0; i <= 3; i++){ const [x,y] = pt(i%3, ring/4); i ? ctx.lineTo(x,y) : ctx.moveTo(x,y); }
+      ctx.strokeStyle = `rgba(255,255,255,${ring === 4 ? .18 : .07})`; ctx.lineWidth = 1; ctx.stroke();
+    }
+    for (let i = 0; i < 3; i++){
+      const [x,y] = pt(i, 1);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y);
+      ctx.strokeStyle = 'rgba(255,255,255,.09)'; ctx.stroke();
+      const [lx,ly] = pt(i, 1.18);
+      ctx.fillStyle = 'rgba(232,236,248,.9)'; ctx.font = '600 13px Noto Sans SC'; ctx.textAlign = 'center';
+      ctx.fillText(AXES[i], lx, ly+4);
+    }
+    /* 数据多边形 */
+    const paint = (vals, color) => {
+      ctx.beginPath();
+      vals.forEach((v,i) => { const [x,y] = pt(i, Math.max(v,.03)); i ? ctx.lineTo(x,y) : ctx.moveTo(x,y); });
+      ctx.closePath();
+      ctx.fillStyle = color+'2e'; ctx.fill();
+      ctx.strokeStyle = color; ctx.lineWidth = 2.2;
+      ctx.shadowColor = color; ctx.shadowBlur = 14; ctx.stroke(); ctx.shadowBlur = 0;
+      vals.forEach((v,i) => {
+        const [x,y] = pt(i, Math.max(v,.03));
+        ctx.beginPath(); ctx.arc(x,y,4,0,7); ctx.fillStyle = color; ctx.fill();
+      });
+    };
+    paint(cur.a, '#22d3ee');
+    paint(cur.b, '#f472b6');
+    /* 图例 */
+    ctx.font = '12px Noto Sans SC'; ctx.textAlign = 'left';
+    ctx.fillStyle = '#22d3ee'; ctx.fillRect(cx-120, 12, 10, 10);
+    ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selA.value].name, cx-104, 21);
+    ctx.fillStyle = '#f472b6'; ctx.fillRect(cx+30, 12, 10, 10);
+    ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selB.value].name, cx+46, 21);
+  }
+  function tick(){
+    let done = true;
+    for (const k of ['a','b']) for (let i = 0; i < 3; i++){
+      const d = target[k][i]-cur[k][i];
+      if (Math.abs(d) > .001){ cur[k][i] += d*.14; done = false; } else cur[k][i] = target[k][i];
+    }
+    draw();
+    if (!done) requestAnimationFrame(tick);
+  }
+  function update(){
+    const A = MODELS[selA.value], B = MODELS[selB.value];
+    target.a = norm(A); target.b = norm(B);
+    chipA.innerHTML = `<span style="color:#22d3ee">🅰</span> ${A.name} <span style="color:var(--dim)">智能 ${A.intel} · ${A.speed?A.speed+' t/s':'速度—'} · ${A.cost!=null?'$'+A.cost.toFixed(2):'成本—'}</span><span class="cnum" style="color:#22d3ee">${(overall(A)*100).toFixed(0)}</span>`;
+    chipB.innerHTML = `<span style="color:#f472b6">🅱</span> ${B.name} <span style="color:var(--dim)">智能 ${B.intel} · ${B.speed?B.speed+' t/s':'速度—'} · ${B.cost!=null?'$'+B.cost.toFixed(2):'成本—'}</span><span class="cnum" style="color:#f472b6">${(overall(B)*100).toFixed(0)}</span>`;
+    const oa = overall(A), ob = overall(B);
+    winLine.innerHTML = oa === ob ? '⚖️ 两位选手<b>势均力敌</b>！'
+      : `🏆 综合战力 <b>${oa > ob ? A.name : B.name}</b> 胜出（${(Math.max(oa,ob)*100).toFixed(0)} vs ${(Math.min(oa,ob)*100).toFixed(0)}）`;
+    requestAnimationFrame(tick);
+  }
+  selA.onchange = selB.onchange = update;
+  const co = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ update(); co.disconnect(); }
+  }), {threshold:.25});
+  co.observe(cv);
+  addEventListener('resize', draw);
+})();
+</script>
+</body>
+</html>
