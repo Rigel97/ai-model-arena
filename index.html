@@ -111,13 +111,14 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
 
 /* ---------- Hero ---------- */
 #hero{
-  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;padding-top:120px;position:relative;
+  min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding-top:120px;padding-bottom:120px;position:relative;
 }
 .hero-badge{
   font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:4px;color:var(--dim);
   border:1px solid var(--panel-border);border-radius:99px;padding:8px 22px;margin-bottom:30px;
   background:var(--panel);opacity:0;animation:fadeUp 1s .2s forwards;
+  max-width:calc(100vw - 40px);text-align:center;line-height:2;
 }
 .hero-title{
   font-family:'Orbitron','Noto Sans SC',sans-serif;
@@ -150,7 +151,7 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
 .hstat .num span{font-size:16px;color:var(--dim)}
 .hstat .lbl{font-size:12px;color:var(--dim);margin-top:6px;letter-spacing:1px}
 .scroll-hint{
-  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  position:absolute;bottom:30px;left:0;right:0;
   color:var(--dim);font-size:11px;letter-spacing:3px;text-align:center;
   opacity:0;animation:fadeUp 1s 1.4s forwards;
 }
@@ -302,6 +303,57 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
   background:linear-gradient(90deg,var(--cyan),var(--violet));
   box-shadow:0 0 18px rgba(103,232,249,.35);
 }
+/* ---------- 响应式适配（平板 / 手机） ---------- */
+@media(max-width:640px){
+  nav{padding:12px 16px}
+  .nav-logo{font-size:15px;letter-spacing:1px}
+  section{padding:84px 16px 32px}
+  #hero{padding-top:96px;padding-bottom:100px}
+  .sec-sub{font-size:14px;margin-bottom:30px}
+  .hero-badge{font-size:10.5px;letter-spacing:1.5px;padding:7px 14px}
+  .hero-title{letter-spacing:1px}
+  .hero-stats{gap:12px;margin-top:38px}
+  .hstat{min-width:132px;padding:16px 20px;border-radius:14px}
+  .hstat .num{font-size:27px}
+  .hstat .num span{font-size:13px}
+  .podium{gap:14px;margin-bottom:44px}
+  .pcard{padding:24px 18px}
+  .pcard.first{padding-bottom:32px}
+  .pcard .big-score{font-size:44px}
+  .pcard.first .big-score{font-size:54px}
+  .board{border-radius:18px}
+  .chart-wrap{padding:14px;border-radius:18px}
+  #scatter{height:420px}
+  .legend{gap:8px 12px}
+  .legend .li{font-size:11px}
+  .compare-panel{padding:20px 16px;gap:24px;border-radius:18px}
+  #radar{height:340px}
+  .sel-block select{font-size:16px;padding:12px 14px} /* ≥16px 防止 iOS 聚焦时自动放大页面 */
+  .vs-chip{padding:12px 14px;font-size:12.5px}
+  .vs-chip .cnum{font-size:22px}
+  #tooltip{min-width:150px;padding:10px 14px;font-size:12px}
+  footer{padding:52px 16px 36px}
+}
+@media(max-width:420px){
+  .hstat{min-width:calc(50% - 6px)}
+  .brow .mname .orgtag{display:none}
+  #scatter{height:380px}
+  .sec-tag{letter-spacing:2px}
+}
+@media(max-width:760px){
+  .podium .pcard.first{order:-1} /* 单列布局时金牌优先展示 */
+}
+@media(max-height:600px){
+  .scroll-hint{display:none} /* 矮屏避免滚动提示与内容重叠 */
+}
+@media(hover:none){
+  #cursor-glow{display:none} /* 触屏设备无鼠标，隐藏辉光 */
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+
 /* ---------- 页脚 ---------- */
 footer{
   position:relative;z-index:2;text-align:center;padding:70px 20px 46px;color:var(--dim);font-size:12.5px;line-height:2;
@@ -626,15 +678,19 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
   const pts = MODELS.filter(m => m.cost != null);
   const XMIN = Math.log10(0.02), XMAX = Math.log10(4), YMIN = 15, YMAX = 68;
   let W, H, dpr, dots = [], progress = 0, hovered = null, raf;
+  let ML = 60, MR = 40;    /* 左右边距（窄屏自动收紧，保证绘图区宽度） */
+  const MT = 24, MB = 56;  /* 上、下边距 */
 
   function resize(){
     dpr = devicePixelRatio || 1;
     W = cv.clientWidth; H = cv.clientHeight;
     cv.width = W*dpr; cv.height = H*dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
+    ML = W < 520 ? 44 : 60;
+    MR = W < 520 ? 14 : 40;
   }
-  const px = c => 60 + (Math.log10(c)-XMIN)/(XMAX-XMIN)*(W-100);
-  const py = v => 24 + (1-(v-YMIN)/(YMAX-YMIN))*(H-80);
+  const px = c => ML + (Math.log10(c)-XMIN)/(XMAX-XMIN)*(W-ML-MR);
+  const py = v => MT + (1-(v-YMIN)/(YMAX-YMIN))*(H-MT-MB);
 
   /* Pareto 前沿（成本升序中智能创新高者） */
   const pareto = [...pts].sort((a,b) => a.cost-b.cost)
@@ -647,17 +703,17 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     ctx.fillStyle = 'rgba(139,147,176,.75)'; ctx.font = '11px JetBrains Mono';
     [0.03,0.1,0.3,1,3].forEach(c => {
       const x = px(c);
-      ctx.beginPath(); ctx.moveTo(x,24); ctx.lineTo(x,H-56); ctx.stroke();
-      ctx.textAlign = 'center'; ctx.fillText('$'+c, x, H-38);
+      ctx.beginPath(); ctx.moveTo(x,MT); ctx.lineTo(x,H-MB); ctx.stroke();
+      ctx.textAlign = 'center'; ctx.fillText('$'+c, x, H-MB+18);
     });
     [20,30,40,50,60].forEach(v => {
       const y = py(v);
-      ctx.beginPath(); ctx.moveTo(60,y); ctx.lineTo(W-40,y); ctx.stroke();
-      ctx.textAlign = 'right'; ctx.fillText(v, 48, y+4);
+      ctx.beginPath(); ctx.moveTo(ML,y); ctx.lineTo(W-MR,y); ctx.stroke();
+      ctx.textAlign = 'right'; ctx.fillText(v, ML-12, y+4);
     });
     ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(139,147,176,.9)';
-    ctx.fillText('单任务成本（USD，对数刻度）→', (W+60)/2-20, H-14);
-    ctx.save(); ctx.translate(16,(H-32)/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('单任务成本（USD，对数刻度）→', ML+(W-ML-MR)/2, H-14);
+    ctx.save(); ctx.translate(16,MT+(H-MT-MB)/2); ctx.rotate(-Math.PI/2);
     ctx.fillText('智能指数 →', 0, 0); ctx.restore();
 
     const ease = 1-Math.pow(1-progress, 3);
@@ -718,11 +774,11 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
       ];
       for (const cnd of cand){
         let tx = d.x + cnd.ox;
-        if (cnd.ax === 'center') tx = Math.max(64+tw/2, Math.min(W-44-tw/2, tx));
+        if (cnd.ax === 'center') tx = Math.max(ML+4+tw/2, Math.min(W-MR-4-tw/2, tx));
         const ty = d.y + cnd.oy;
         const bx = cnd.ax === 'left' ? tx : cnd.ax === 'right' ? tx-tw : tx-tw/2;
         const rect = {x0:bx-3, x1:bx+tw+3, y0:ty-9, y1:ty+3};
-        if (rect.x0 < 56 || rect.x1 > W-38 || rect.y0 < 16 || rect.y1 > H-54) continue;
+        if (rect.x0 < ML-4 || rect.x1 > W-MR+2 || rect.y0 < MT-8 || rect.y1 > H-MB+2) continue;
         if (placed.some(q => rect.x0 < q.x1 && rect.x1 > q.x0 && rect.y0 < q.y1 && rect.y1 > q.y0)) continue;
         placed.push(rect);
         ctx.globalAlpha = hovered && hovered.m !== d.m ? .25 : .95;
@@ -747,14 +803,15 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
   so.observe(cv);
   addEventListener('resize', () => { resize(); draw(); });
 
-  cv.addEventListener('mousemove', e => {
-    const r = cv.getBoundingClientRect(), mx = e.clientX-r.left, my = e.clientY-r.top;
-    hovered = dots.find(d => Math.hypot(d.x-mx, d.y-my) < d.r+4) || null;
+  /* 鼠标悬停 + 触屏点按共用同一套拾取逻辑 */
+  function handlePoint(clientX, clientY){
+    const r = cv.getBoundingClientRect(), mx = clientX-r.left, my = clientY-r.top;
+    hovered = dots.find(d => Math.hypot(d.x-mx, d.y-my) < d.r+6) || null;
     cv.style.cursor = hovered ? 'pointer' : 'default';
     if (hovered){
       const m = hovered.m;
       tip.style.opacity = 1;
-      tip.style.left = Math.min(hovered.x+22, W-220)+'px';
+      tip.style.left = Math.max(8, Math.min(hovered.x+22, W-200))+'px';
       tip.style.top = Math.max(hovered.y-30, 8)+'px';
       tip.innerHTML = `<div class="tt-name" style="color:${colorOf(m)}">${m.name}</div>
         <div class="tt-row"><span>厂商</span><b>${m.org}</b></div>
@@ -763,8 +820,14 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
         <div class="tt-row"><span>单任务成本</span><b>$${m.cost.toFixed(2)}</b></div>`;
     } else tip.style.opacity = 0;
     if (progress >= 1) draw();
-  });
+  }
+  cv.addEventListener('mousemove', e => handlePoint(e.clientX, e.clientY));
   cv.addEventListener('mouseleave', () => { hovered = null; tip.style.opacity = 0; if (progress >= 1) draw(); });
+  cv.addEventListener('touchstart', e => { const t = e.touches[0]; handlePoint(t.clientX, t.clientY); }, {passive:true});
+  cv.addEventListener('touchmove',  e => { const t = e.touches[0]; handlePoint(t.clientX, t.clientY); }, {passive:true});
+  cv.addEventListener('touchend', () => setTimeout(() => {
+    hovered = null; tip.style.opacity = 0; if (progress >= 1) draw();
+  }, 1600));
 
   /* 图例 */
   const orgs = [...new Set(pts.map(m => m.org))];
@@ -823,7 +886,8 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     if (cv.width !== W*dpr){ cv.width = W*dpr; cv.height = H*dpr; }
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,W,H);
-    const cx = W/2, cy = H/2+8, R = Math.min(W,H)/2 - 62;
+    const pad = W < 420 ? 46 : 62;
+    const cx = W/2, cy = H/2+8, R = Math.min(W,H)/2 - pad;
     const pt = (i, v) => {
       const ang = -Math.PI/2 + i*2*Math.PI/3;
       return [cx + Math.cos(ang)*R*v, cy + Math.sin(ang)*R*v];
@@ -839,7 +903,7 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y);
       ctx.strokeStyle = 'rgba(255,255,255,.09)'; ctx.stroke();
       const [lx,ly] = pt(i, 1.18);
-      ctx.fillStyle = 'rgba(232,236,248,.9)'; ctx.font = '600 13px Noto Sans SC'; ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(232,236,248,.9)'; ctx.font = (W < 420 ? '600 11.5px' : '600 13px') + ' Noto Sans SC'; ctx.textAlign = 'center';
       ctx.fillText(AXES[i], lx, ly+4);
     }
     /* 数据多边形 */
@@ -857,12 +921,19 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     };
     paint(cur.a, '#22d3ee');
     paint(cur.b, '#f472b6');
-    /* 图例 */
+    /* 图例（窄屏改为左上角纵向排列，避免两个模型名重叠溢出） */
     ctx.font = '12px Noto Sans SC'; ctx.textAlign = 'left';
-    ctx.fillStyle = '#22d3ee'; ctx.fillRect(cx-120, 12, 10, 10);
-    ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selA.value].name, cx-104, 21);
-    ctx.fillStyle = '#f472b6'; ctx.fillRect(cx+30, 12, 10, 10);
-    ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selB.value].name, cx+46, 21);
+    if (W < 400){
+      ctx.fillStyle = '#22d3ee'; ctx.fillRect(10, 12, 10, 10);
+      ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selA.value].name, 26, 21);
+      ctx.fillStyle = '#f472b6'; ctx.fillRect(10, 32, 10, 10);
+      ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selB.value].name, 26, 41);
+    } else {
+      ctx.fillStyle = '#22d3ee'; ctx.fillRect(cx-120, 12, 10, 10);
+      ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selA.value].name, cx-104, 21);
+      ctx.fillStyle = '#f472b6'; ctx.fillRect(cx+30, 12, 10, 10);
+      ctx.fillStyle = '#e8ecf8'; ctx.fillText(MODELS[selB.value].name, cx+46, 21);
+    }
   }
   function tick(){
     let done = true;
