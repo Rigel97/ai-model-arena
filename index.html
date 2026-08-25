@@ -386,12 +386,12 @@ footer a:hover{text-decoration:underline}
   <section id="hero">
     <div class="hero-badge">DATA SOURCE · ARTIFICIAL ANALYSIS · INTELLIGENCE INDEX v4.1.1</div>
     <h1 class="hero-title">大模型<br><span class="line2">巅峰竞技场</span></h1>
-    <p class="hero-sub">基于 Artificial Analysis 独立评测体系（GDPval-AA v2、τ³-Banking、Terminal-Bench v2.1、SciCode、HLE、GPQA Diamond、CritPt 等 <b>9 项权威评测</b>），全方位透视 <b>27 家厂商 45 个代表模型</b> 的智能、速度与成本差异。</p>
+    <p class="hero-sub">基于 Artificial Analysis 独立评测体系（GDPval-AA v2、τ³-Banking、Terminal-Bench v2.1、SciCode、HLE、GPQA Diamond、CritPt 等 <b>9 项权威评测</b>），全方位透视 <b>27 家厂商 46 个代表模型</b> 的智能、速度与成本差异。</p>
     <div class="hero-stats">
-      <div class="hstat"><div class="num" data-count="45">0</div><div class="lbl">参评模型</div></div>
+      <div class="hstat"><div class="num" data-count="46">0</div><div class="lbl">参评模型</div></div>
       <div class="hstat"><div class="num" data-count="27">0</div><div class="lbl">覆盖厂商</div></div>
       <div class="hstat"><div class="num" data-count="63">0</div><div class="lbl">最高智能指数</div></div>
-      <div class="hstat"><div class="num" data-count="521">0<span> t/s</span></div><div class="lbl">最快输出速度</div></div>
+      <div class="hstat"><div class="num" data-count="362">0<span> t/s</span></div><div class="lbl">最快输出速度</div></div>
     </div>
     <div class="scroll-hint"><div class="mouse"></div>SCROLL</div>
   </section>
@@ -411,7 +411,7 @@ footer a:hover{text-decoration:underline}
   <section id="speed">
     <div class="sec-tag reveal">Output Speed</div>
     <h2 class="sec-title reveal">生成速度 <span class="grad-text">竞速榜</span></h2>
-    <p class="sec-sub reveal">每秒输出 Token 数（越高越快）。GPT-5.6 Luna 以 521 t/s 一骑绝尘，Gemini 3.7 Flash 紧随其后达 340 t/s。</p>
+    <p class="sec-sub reveal">每秒输出 Token 数（越高越快）。Gemini 3.7 Flash 以 362 t/s 一骑绝尘，Nemotron 3 Ultra 紧随其后达 167 t/s。</p>
     <div class="board reveal" id="speed-board"></div>
   </section>
 
@@ -465,7 +465,7 @@ footer a:hover{text-decoration:underline}
 
 <footer>
   <div class="footer-line"></div>
-  数据来源：<a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">Artificial Analysis</a> · Intelligence Index v4.1.1（2026 年 8 月 14 日快照）<br>
+  数据来源：<a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">Artificial Analysis</a> · Intelligence Index v4.1.1（2026 年 8 月 25 日快照）<br>
   本页面仅用于数据可视化演示 · 评分为第三方独立评测结果，仅供参考
 </footer>
 
@@ -484,16 +484,16 @@ const ORG_COLORS = {
    每家厂商精选 2-3 个代表模型 · speed 单位 t/s · cost 单位 USD/任务 · null 为官方未公布 */
 const MODELS = [
   /* Anthropic */
-  {name:'Claude Opus 5 (max)',        org:'Anthropic',        intel:63, speed:63,  cost:2.34},
-  {name:'Claude Fable 5',             org:'Anthropic',        intel:62, speed:66,  cost:3.14},
+  {name:'Claude Opus 5 (max)',        org:'Anthropic',        intel:63, speed:59,  cost:2.34},
+  {name:'Claude Fable 5',             org:'Anthropic',        intel:62, speed:71,  cost:3.14},
   {name:'Claude Sonnet 5 (max)',      org:'Anthropic',        intel:55, speed:null,cost:null},
   /* OpenAI */
-  {name:'GPT-5.6 Sol (max)',          org:'OpenAI',           intel:61, speed:78,  cost:1.23},
-  {name:'GPT-5.6 Luna (max)',         org:'OpenAI',           intel:53, speed:521, cost:0.05},
+  {name:'GPT-5.6 Sol (max)',          org:'OpenAI',           intel:61, speed:74,  cost:0.96},
+  {name:'GPT-5.6 Luna (max)',         org:'OpenAI',           intel:52, speed:141, cost:0.05},
   {name:'GPT-5.6 Terra (max)',        org:'OpenAI',           intel:57, speed:null,cost:null},
   {name:'GPT-5.5 (xhigh)',            org:'OpenAI',           intel:56, speed:null,cost:null},
   /* Moonshot AI */
-  {name:'Kimi K3 (max)',              org:'Moonshot AI',      intel:60, speed:53,  cost:0.84},
+  {name:'Kimi K3 (max)',              org:'Moonshot AI',      intel:60, speed:35,  cost:0.84},
   {name:'Kimi K2.7 Code',             org:'Moonshot AI',      intel:43, speed:null,cost:null},
   /* Alibaba */
   {name:'Qwen3.8 Max',                org:'Alibaba',          intel:58, speed:null,cost:null},
@@ -502,18 +502,19 @@ const MODELS = [
   {name:'Muse Spark 1.2 (xhigh)',     org:'Meta',             intel:57, speed:null,cost:0.40},
   {name:'Llama 4 Maverick',           org:'Meta',             intel:14, speed:null,cost:null},
   /* xAI */
-  {name:'Grok 4.6 (high)',            org:'xAI',              intel:61, speed:108, cost:0.40},
+  {name:'Grok 4.6 (high)',            org:'xAI',              intel:61, speed:62,  cost:0.84},
   {name:'Grok 4.5 (high)',            org:'xAI',              intel:56, speed:60,  cost:0.36},
   {name:'Grok 4.1 Fast',              org:'xAI',              intel:17, speed:null,cost:null},
   /* Zhipu AI */
-  {name:'GLM-5.2 (max)',              org:'Zhipu AI',         intel:53, speed:152, cost:0.32},
+  {name:'GLM-5.3 (max)',              org:'Zhipu AI',         intel:60, speed:90,  cost:0.68},
+  {name:'GLM-5.2 (max)',              org:'Zhipu AI',         intel:53, speed:79,  cost:0.44},
   {name:'GLM-4.7',                    org:'Zhipu AI',         intel:34, speed:null,cost:null},
   /* DeepSeek */
   {name:'DeepSeek V4 Flash 0731',     org:'DeepSeek',         intel:52, speed:121, cost:0.03},
-  {name:'DeepSeek V4 Pro 0813 (max)', org:'DeepSeek',         intel:53, speed:78,  cost:0.25},
+  {name:'DeepSeek V4 Pro 0813 (max)', org:'DeepSeek',         intel:53, speed:72,  cost:0.25},
   {name:'DeepSeek R1 0528',           org:'DeepSeek',         intel:20, speed:null,cost:null},
   /* Google */
-  {name:'Gemini 3.7 Flash (high)',    org:'Google',           intel:56, speed:340, cost:0.40},
+  {name:'Gemini 3.7 Flash (high)',    org:'Google',           intel:56, speed:362, cost:0.40},
   {name:'Gemini 3.6 Flash',           org:'Google',           intel:52, speed:225, cost:0.56},
   {name:'Gemini 3 Pro Preview',       org:'Google',           intel:41, speed:null,cost:null},
   {name:'Gemma 4 31B',                org:'Google',           intel:30, speed:null,cost:null},
@@ -530,7 +531,7 @@ const MODELS = [
   {name:'Agnes 2.5 Pro Alpha',        org:'Agnes AI',         intel:40, speed:null,cost:null},
   /* InclusionAI / NVIDIA */
   {name:'Ling 3.0 Flash',             org:'InclusionAI',      intel:38, speed:null,cost:null},
-  {name:'Nemotron 3 Ultra',           org:'NVIDIA',           intel:38, speed:134, cost:0.38},
+  {name:'Nemotron 3 Ultra',           org:'NVIDIA',           intel:38, speed:167, cost:0.38},
   /* Meituan / StepFun */
   {name:'LongCat 2.0',                org:'Meituan',          intel:34, speed:null,cost:null},
   {name:'Step 3.7 Flash',             org:'StepFun',          intel:31, speed:null,cost:null},
@@ -667,7 +668,7 @@ function buildBoard(el, data, getVal, max, fmt, lowerBetter){
 buildBoard(document.getElementById('intel-board'), MODELS, m => m.intel, 63, v => v, false);
 document.getElementById('intel-board').insertAdjacentHTML('beforeend',
   '<div class="note">💡 每家厂商精选 2-3 个代表模型 · 涵盖推理与非推理模型 · 智能指数越高越好</div>');
-buildBoard(document.getElementById('speed-board'), MODELS.filter(m => m.speed), m => m.speed, 235, v => v+' t/s', false);
+buildBoard(document.getElementById('speed-board'), MODELS.filter(m => m.speed), m => m.speed, 362, v => v+' t/s', false);
 document.getElementById('speed-board').insertAdjacentHTML('beforeend',
   '<div class="note">⚡ 仅展示官方公布速度数据的模型 · 每秒输出 Token 数越高越好</div>');
 buildBoard(document.getElementById('cost-board'), MODELS.filter(m => m.cost != null), m => m.cost, 3.14, v => '$'+v.toFixed(2), true);
@@ -744,7 +745,7 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
       if (p <= 0) return;
       const e = 1-Math.pow(1-p, 3);
       const x = px(m.cost), y = py(m.intel) + (1-e)*40;
-      const r = (m.speed ? 7 + m.speed/235*17 : 9) * e;
+      const r = (m.speed ? 7 + m.speed/362*17 : 9) * e;
       const c = colorOf(m);
       dots.push({x, y, r, m});
       ctx.save();
@@ -851,7 +852,7 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
   const chipA = document.getElementById('chip-a'), chipB = document.getElementById('chip-b'),
         winLine = document.getElementById('winner-line');
   const AXES = ['智能', '速度', '成本效益'];
-  const MAXS = {intel:63, speed:521};
+  const MAXS = {intel:63, speed:362};
   const norm = m => [
     m.intel/MAXS.intel,
     m.speed ? m.speed/MAXS.speed : .04,
