@@ -1,6 +1,6 @@
 # AI Model Arena · 大模型巅峰竞技场
 
-一个纯单文件、零依赖的大模型评测数据可视化网站，基于 [Artificial Analysis](https://artificialanalysis.ai/) 独立评测体系（Intelligence Index v4.1.1），全方位透视 **27 家厂商 41 个代表模型** 的智能、速度与成本差异。
+一个纯单文件、零依赖的大模型评测数据可视化网站，基于 [Artificial Analysis](https://artificialanalysis.ai/) 独立评测体系（Intelligence Index v4.1.1），全方位透视 **17 家厂商 29 个代表模型** 的智能、速度与成本差异。
 
 🌐 **在线访问**：<https://rigel97.github.io/ai-model-arena/>
 
@@ -21,12 +21,12 @@
 - 全屏交互式粒子网络背景（鼠标靠近粒子会被推开）
 - 漂浮星云光斑 + 鼠标跟随辉光 + 科技网格叠加
 - 滚动触发显现动画、数字滚动计数、条形图交错生长
-- 27 家厂商专属配色，全站图表色彩联动
+- 17 家厂商专属配色，全站图表色彩联动
 
 ## 📊 数据说明
 
-- 数据来源：Artificial Analysis Intelligence Index v4.1.1（2026 年 8 月快照），综合 GDPval-AA v2、τ³-Banking、Terminal-Bench v2.1、SciCode、HLE、GPQA Diamond、CritPt、AA-Omniscience、AA-LCR 共 9 项评测
-- 每家厂商精选 2~3 个代表模型
+- 数据来源：Artificial Analysis Intelligence Index v4.1.1（2026 年 9 月 3 日快照），综合 GDPval-AA v2、τ³-Banking、Terminal-Bench v2.1、SciCode、HLE、GPQA Diamond、CritPt、AA-Omniscience、AA-LCR 共 9 项评测
+- 每家厂商精选 1~3 个代表模型，剔除过冷门与智能过低的型号
 - 速度 / 成本维度仅展示官方已公布数据的模型，未公布的一律标记为 `null`，不做臆造
 - 「综合战力」为本站自定义的加权评分（非官方指标），权重随任务场景切换
 
