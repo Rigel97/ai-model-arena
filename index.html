@@ -384,14 +384,14 @@ footer a:hover{text-decoration:underline}
 <main>
   <!-- ================= HERO ================= -->
   <section id="hero">
-    <div class="hero-badge">DATA SOURCE · ARTIFICIAL ANALYSIS · INTELLIGENCE INDEX v4.1.1</div>
+    <div class="hero-badge">DATA SOURCE · ARTIFICIAL ANALYSIS · INTELLIGENCE INDEX v4.3</div>
     <h1 class="hero-title">大模型<br><span class="line2">巅峰竞技场</span></h1>
-    <p class="hero-sub">基于 Artificial Analysis 独立评测体系（GDPval-AA v2、τ³-Banking、Terminal-Bench v2.1、SciCode、HLE、GPQA Diamond、CritPt、AA-Omniscience、AA-LCR 共 <b>9 项权威评测</b>），全方位透视 <b>17 家厂商 29 个代表模型</b> 的智能、速度与成本差异。</p>
+    <p class="hero-sub">基于 Artificial Analysis 独立评测体系（AA-Briefcase、GDPval-AA v2、AutomationBench-AA、Terminal-Bench v4.0、SciCode、Humanity's Last Exam、GDP.pdf、CritPt、AA-Omniscience、AA-LCR v1.1 共 <b>10 项权威评测</b>），全方位透视 <b>17 家厂商 30 个代表模型</b> 的智能、速度与成本差异。</p>
     <div class="hero-stats">
-      <div class="hstat"><div class="num" data-count="29">0</div><div class="lbl">参评模型</div></div>
+      <div class="hstat"><div class="num" data-count="30">0</div><div class="lbl">参评模型</div></div>
       <div class="hstat"><div class="num" data-count="17">0</div><div class="lbl">覆盖厂商</div></div>
-      <div class="hstat"><div class="num" data-count="66">0</div><div class="lbl">最高智能指数</div></div>
-      <div class="hstat"><div class="num" data-count="364">0<span> t/s</span></div><div class="lbl">最快输出速度</div></div>
+      <div class="hstat"><div class="num" data-count="53">0</div><div class="lbl">最高智能指数</div></div>
+      <div class="hstat"><div class="num" data-count="356">0<span> t/s</span></div><div class="lbl">最快输出速度</div></div>
     </div>
     <div class="scroll-hint"><div class="mouse"></div>SCROLL</div>
   </section>
@@ -400,7 +400,7 @@ footer a:hover{text-decoration:underline}
   <section id="intelligence">
     <div class="sec-tag reveal">Intelligence Index</div>
     <h2 class="sec-title reveal">智能指数 <span class="grad-text">排行榜</span></h2>
-    <p class="sec-sub reveal">Artificial Analysis Intelligence Index v4.1.1，综合 9 项评测，分数越高越聪明。前三名登上领奖台。</p>
+    <p class="sec-sub reveal">Artificial Analysis Intelligence Index v4.3，综合 10 项评测，分数越高越聪明。Claude Fable 5.1 与新旗舰 GPT-6 Astra 同以 53 分并列登顶。前三名登上领奖台。</p>
 
     <div class="podium reveal" id="podium"></div>
 
@@ -411,7 +411,7 @@ footer a:hover{text-decoration:underline}
   <section id="speed">
     <div class="sec-tag reveal">Output Speed</div>
     <h2 class="sec-title reveal">生成速度 <span class="grad-text">竞速榜</span></h2>
-    <p class="sec-sub reveal">每秒输出 Token 数（越高越快）。Gemini 3.5 Flash-Lite 以 364 t/s 领跑，Gemini 3.8 Flash（low）313 t/s、（high）302 t/s，Google 包揽速度榜前三。</p>
+    <p class="sec-sub reveal">每秒输出 Token 数（越高越快）。Gemini 3.5 Flash-Lite 以 356 t/s 一骑绝尘，Ling 3.0 Flash（298 t/s）与 Gemini 3.8 Flash (high)（274 t/s）分列二三。</p>
     <div class="board reveal" id="speed-board"></div>
   </section>
 
@@ -419,7 +419,7 @@ footer a:hover{text-decoration:underline}
   <section id="cost">
     <div class="sec-tag reveal">Cost per Task</div>
     <h2 class="sec-title reveal">单任务成本 <span class="grad-text">省钱榜</span></h2>
-    <p class="sec-sub reveal">完成一个智能指数任务的加权平均成本（美元，越低越好）。Agnes 2.5 Pro Beta 与 MiMo-V2.5-Pro 仅需 $0.03，GPT-5.6 Luna 仅需 $0.05，而 Claude Fable 5.1 高达 $3.69 —— 相差超 120 倍。</p>
+    <p class="sec-sub reveal">完成一个智能指数任务的加权平均成本（美元，越低越好）。MiMo-V2.5-Pro 仅需 $0.05、Muse Glimmer 仅需 $0.06，而 Claude Fable 5 高达 $8.75 —— 相差 175 倍。</p>
     <div class="board reveal" id="cost-board"></div>
   </section>
 
@@ -465,7 +465,7 @@ footer a:hover{text-decoration:underline}
 
 <footer>
   <div class="footer-line"></div>
-  数据来源：<a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">Artificial Analysis</a> · Intelligence Index v4.1.1（2026 年 9 月 3 日快照）<br>
+  数据来源：<a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">Artificial Analysis</a> · Intelligence Index v4.3（2026 年 9 月 9 日快照）<br>
   本页面仅用于数据可视化演示 · 评分为第三方独立评测结果，仅供参考
 </footer>
 
@@ -478,56 +478,57 @@ const ORG_COLORS = {
   'Xiaomi':'#fb7185','Agnes AI':'#e879f9','Thinking Machines':'#4ade80',
   'InclusionAI':'#2dd4bf','NVIDIA':'#a3e635'
 };
-/* 数据：Artificial Analysis Intelligence Index v4.1.1（2026-09-03 快照）
-   每家厂商精选 1-3 个代表模型，剔除过冷门与智能过低型号
+/* 数据：Artificial Analysis Intelligence Index v4.3（2026-09-09 快照）
+   每家厂商精选 1-4 个代表模型，剔除过冷门与智能过低型号
    speed 单位 t/s · cost 单位 USD/任务 · null 为官方未公布 */
 const MODELS = [
-  /* Anthropic —— 包揽智能榜前二 */
-  {name:'Claude Fable 5.1 (max)',     org:'Anthropic',        intel:66, speed:66,  cost:3.69},
-  {name:'Claude Opus 5 (max)',        org:'Anthropic',        intel:63, speed:55,  cost:2.34},
-  {name:'Claude Fable 5',             org:'Anthropic',        intel:62, speed:67,  cost:3.14},
-  /* OpenAI */
-  {name:'GPT-5.6 Sol (max)',          org:'OpenAI',           intel:61, speed:70,  cost:0.95},
-  {name:'GPT-5.6 Terra (max)',        org:'OpenAI',           intel:57, speed:98,  cost:0.53},
-  {name:'GPT-5.6 Luna (max)',         org:'OpenAI',           intel:52, speed:123, cost:0.05},
-  /* Google —— 速度三连冠 */
-  {name:'Gemini 3.5 Flash-Lite',      org:'Google',           intel:37, speed:364, cost:0.10},
-  {name:'Gemini 3.8 Flash (low)',     org:'Google',           intel:52, speed:313, cost:0.24},
-  {name:'Gemini 3.8 Flash (high)',    org:'Google',           intel:59, speed:302, cost:0.58},
-  /* Meta —— Muse Spark 1.3 首入第一梯队 */
-  {name:'Muse Spark 1.3 (max)',       org:'Meta',             intel:62, speed:null,cost:null},
-  {name:'Muse Spark 1.3 (xhigh)',     org:'Meta',             intel:61, speed:209, cost:0.55},
-  {name:'Muse Glimmer (high)',        org:'Meta',             intel:35, speed:109, cost:0.06},
+  /* Anthropic —— Fable 5.1 并列第一，但单任务成本最高 */
+  {name:'Claude Fable 5.1 (max)',     org:'Anthropic',        intel:53, speed:69,  cost:7.63},
+  {name:'Claude Opus 5 (max)',        org:'Anthropic',        intel:51, speed:53,  cost:5.86},
+  {name:'Claude Fable 5',             org:'Anthropic',        intel:50, speed:63,  cost:8.75},
+  /* OpenAI —— 新旗舰 GPT-6 Astra（2026-09-03 发布）空降并列第一 */
+  {name:'GPT-6 Astra (max)',          org:'OpenAI',           intel:53, speed:54,  cost:3.26},
+  {name:'GPT-5.6 Sol (max)',          org:'OpenAI',           intel:47, speed:68,  cost:1.99},
+  {name:'GPT-5.6 Terra (max)',        org:'OpenAI',           intel:42, speed:107, cost:1.40},
+  {name:'GPT-5.6 Luna (max)',         org:'OpenAI',           intel:38, speed:113, cost:0.18},
+  /* Google —— Flash-Lite 依旧霸榜速度 */
+  {name:'Gemini 3.8 Flash (high)',    org:'Google',           intel:41, speed:274, cost:1.24},
+  {name:'Gemini 3.8 Flash (medium)',  org:'Google',           intel:40, speed:null,cost:0.93},
+  {name:'Gemini 3.5 Flash-Lite',      org:'Google',           intel:23, speed:356, cost:0.12},
+  /* Meta —— Muse Spark 1.3 稳居第一梯队 */
+  {name:'Muse Spark 1.3 (max)',       org:'Meta',             intel:48, speed:229, cost:1.60},
+  {name:'Muse Spark 1.3 (xhigh)',     org:'Meta',             intel:45, speed:203, cost:1.37},
+  {name:'Muse Glimmer (high)',        org:'Meta',             intel:18, speed:104, cost:0.06},
   /* xAI */
-  {name:'Grok 4.6 (high)',            org:'xAI',              intel:61, speed:53,  cost:0.94},
-  {name:'Grok 4.5 (high)',            org:'xAI',              intel:56, speed:54,  cost:0.43},
+  {name:'Grok 4.6 (high)',            org:'xAI',              intel:44, speed:58,  cost:1.86},
+  {name:'Grok 4.5 (high)',            org:'xAI',              intel:39, speed:58,  cost:1.04},
   /* Alibaba */
-  {name:'Qwen3.8 Max',                org:'Alibaba',          intel:58, speed:39,  cost:0.91},
-  {name:'Qwen3.8 2.4T A95B',          org:'Alibaba',          intel:58, speed:39,  cost:0.81},
+  {name:'Qwen3.8 2.4T A95B',          org:'Alibaba',          intel:40, speed:41,  cost:2.16},
+  {name:'Qwen3.8 Max',                org:'Alibaba',          intel:40, speed:39,  cost:2.67},
   /* Moonshot AI */
-  {name:'Kimi K3 (max)',              org:'Moonshot AI',      intel:60, speed:38,  cost:0.84},
+  {name:'Kimi K3 (max)',              org:'Moonshot AI',      intel:44, speed:40,  cost:2.00},
   /* Zhipu AI */
-  {name:'GLM-5.3 (max)',              org:'Zhipu AI',         intel:60, speed:63,  cost:0.68},
-  {name:'GLM-5.3-Flash',              org:'Zhipu AI',         intel:57, speed:47,  cost:0.09},
+  {name:'GLM-5.3 (max)',              org:'Zhipu AI',         intel:45, speed:64,  cost:2.01},
+  {name:'GLM-5.3-Flash',              org:'Zhipu AI',         intel:42, speed:73,  cost:0.25},
   /* DeepSeek */
-  {name:'DeepSeek V4 Pro 0813 (max)', org:'DeepSeek',         intel:53, speed:58,  cost:0.27},
-  {name:'DeepSeek V4 Flash 0731',     org:'DeepSeek',         intel:52, speed:138, cost:0.11},
+  {name:'DeepSeek V4 Pro 0813 (max)', org:'DeepSeek',         intel:36, speed:77,  cost:0.67},
+  {name:'DeepSeek V4 Flash 0731',     org:'DeepSeek',         intel:35, speed:126, cost:0.22},
   /* MiniMax */
-  {name:'MiniMax-M3',                 org:'MiniMax',          intel:45, speed:89,  cost:0.14},
+  {name:'MiniMax-M3',                 org:'MiniMax',          intel:30, speed:156, cost:0.51},
   /* Mistral */
-  {name:'Mistral Medium 3.5',         org:'Mistral',          intel:30, speed:null,cost:0.41},
+  {name:'Mistral Medium 3.5',         org:'Mistral',          intel:15, speed:148, cost:0.44},
   /* Motif */
-  {name:'Motif 3',                    org:'Motif',            intel:47, speed:null,cost:null},
+  {name:'Motif 3',                    org:'Motif',            intel:34, speed:null,cost:null},
   /* Xiaomi */
-  {name:'MiMo-V2.5-Pro',              org:'Xiaomi',           intel:43, speed:null,cost:0.03},
+  {name:'MiMo-V2.5-Pro',              org:'Xiaomi',           intel:26, speed:36,  cost:0.05},
   /* Agnes AI */
-  {name:'Agnes 2.5 Pro Beta',         org:'Agnes AI',         intel:49, speed:null,cost:0.03},
+  {name:'Agnes 2.5 Pro Beta',         org:'Agnes AI',         intel:35, speed:null,cost:null},
   /* Thinking Machines */
-  {name:'Inkling',                    org:'Thinking Machines',intel:42, speed:null,cost:0.34},
-  /* InclusionAI */
-  {name:'Ling 3.0 Flash',             org:'InclusionAI',      intel:38, speed:null,cost:0.04},
+  {name:'Inkling',                    org:'Thinking Machines',intel:26, speed:72,  cost:0.61},
+  /* InclusionAI —— Ling 3.0 Flash 速度榜第二 */
+  {name:'Ling 3.0 Flash',             org:'InclusionAI',      intel:25, speed:298, cost:null},
   /* NVIDIA */
-  {name:'Nemotron 3 Ultra',           org:'NVIDIA',           intel:38, speed:144, cost:0.39},
+  {name:'Nemotron 3 Ultra',           org:'NVIDIA',           intel:23, speed:164, cost:0.58},
 ];
 const colorOf = m => ORG_COLORS[m.org] || '#94a3b8';
 
@@ -598,7 +599,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 /* ==================== 领奖台 ==================== */
 (() => {
-  /* 平分时按 AA 官方榜单顺序：未公布速度者优先（如 Muse Spark 1.3 max 62 分排在 Fable 5 62 分之前） */
+  /* 平分时按 AA 官方榜单顺序（即数组顺序）：Claude Fable 5.1 与 GPT-6 Astra 同为 53 分，AA 榜单中 Fable 5.1 列前 */
   const top3 = [...MODELS].sort((a,b) => b.intel-a.intel || (a.speed==null)-(b.speed==null)).slice(0,3);
   const order = [1,0,2], crowns = ['🥇','🥈','🥉'], pod = document.getElementById('podium');
   order.forEach(idx => {
@@ -646,13 +647,13 @@ function buildBoard(el, data, getVal, max, fmt, lowerBetter){
       </div>`);
   });
 }
-buildBoard(document.getElementById('intel-board'), MODELS, m => m.intel, 66, v => v, false);
+buildBoard(document.getElementById('intel-board'), MODELS, m => m.intel, 53, v => v, false);
 document.getElementById('intel-board').insertAdjacentHTML('beforeend',
-  '<div class="note">💡 每家厂商精选 1-3 个代表模型 · 已剔除过冷门与智能过低型号 · 智能指数越高越好</div>');
-buildBoard(document.getElementById('speed-board'), MODELS.filter(m => m.speed), m => m.speed, 364, v => v+' t/s', false);
+  '<div class="note">💡 每家厂商精选 1-4 个代表模型 · 已剔除过冷门与智能过低型号 · 智能指数越高越好</div>');
+buildBoard(document.getElementById('speed-board'), MODELS.filter(m => m.speed), m => m.speed, 356, v => v+' t/s', false);
 document.getElementById('speed-board').insertAdjacentHTML('beforeend',
   '<div class="note">⚡ 仅展示官方公布速度数据的模型 · 每秒输出 Token 数越高越好</div>');
-buildBoard(document.getElementById('cost-board'), MODELS.filter(m => m.cost != null), m => m.cost, 3.69, v => '$'+v.toFixed(2), true);
+buildBoard(document.getElementById('cost-board'), MODELS.filter(m => m.cost != null), m => m.cost, 8.75, v => '$'+v.toFixed(2), true);
 document.getElementById('cost-board').insertAdjacentHTML('beforeend',
   '<div class="note">💰 仅展示官方公布成本数据的模型 · 单任务成本越低越好（条形按相对比例展示）</div>');
 
@@ -661,12 +662,12 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
   const cv = document.getElementById('scatter'), ctx = cv.getContext('2d');
   const tip = document.getElementById('tooltip');
   const pts = MODELS.filter(m => m.cost != null);
-  /* 散点图标签：默认去掉推理档位后缀；若同一基础名有多个点（如 Gemini 3.8 Flash low/high）则保留后缀防重名 */
-  const baseName = n => n.replace(/ \((max|xhigh|medium)\)/, '');
+  /* 散点图标签：默认去掉推理档位后缀；若同一基础名有多个点（如 Gemini 3.8 Flash medium/high、Muse Spark 1.3 max/xhigh）则保留后缀防重名 */
+  const baseName = n => n.replace(/ \((max|xhigh|high|medium|low)\)/, '');
   const baseCount = {};
   pts.forEach(m => { const b = baseName(m.name); baseCount[b] = (baseCount[b]||0)+1; });
   const labelOf = m => baseCount[baseName(m.name)] > 1 ? m.name : baseName(m.name);
-  const XMIN = Math.log10(0.02), XMAX = Math.log10(4), YMIN = 25, YMAX = 70;
+  const XMIN = Math.log10(0.03), XMAX = Math.log10(10), YMIN = 14, YMAX = 58;
   let W, H, dpr, dots = [], progress = 0, hovered = null, raf;
   let ML = 60, MR = 40;    /* 左右边距（窄屏自动收紧，保证绘图区宽度） */
   const MT = 24, MB = 56;  /* 上、下边距 */
@@ -691,12 +692,12 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     /* 网格 */
     ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1;
     ctx.fillStyle = 'rgba(139,147,176,.75)'; ctx.font = '11px JetBrains Mono';
-    [0.03,0.1,0.3,1,3].forEach(c => {
+    [0.05,0.1,0.3,1,3,10].forEach(c => {
       const x = px(c);
       ctx.beginPath(); ctx.moveTo(x,MT); ctx.lineTo(x,H-MB); ctx.stroke();
       ctx.textAlign = 'center'; ctx.fillText('$'+c, x, H-MB+18);
     });
-    [30,40,50,60].forEach(v => {
+    [20,30,40,50].forEach(v => {
       const y = py(v);
       ctx.beginPath(); ctx.moveTo(ML,y); ctx.lineTo(W-MR,y); ctx.stroke();
       ctx.textAlign = 'right'; ctx.fillText(v, ML-12, y+4);
@@ -719,7 +720,7 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
       ctx.stroke(); ctx.restore();
       if (progress > .9){
         ctx.fillStyle = 'rgba(52,211,153,.9)'; ctx.font = '11px Noto Sans SC'; ctx.textAlign='left';
-        ctx.fillText('— 性价比前沿', px(0.09), py(64));
+        ctx.fillText('— 性价比前沿', px(0.10), py(50));
       }
     }
 
@@ -838,11 +839,11 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
   const chipA = document.getElementById('chip-a'), chipB = document.getElementById('chip-b'),
         winLine = document.getElementById('winner-line');
   const AXES = ['智能', '速度', '成本效益'];
-  const MAXS = {intel:66, speed:364};
+  const MAXS = {intel:53, speed:356};
   const norm = m => [
     m.intel/MAXS.intel,
     m.speed ? m.speed/MAXS.speed : .04,
-    m.cost != null ? Math.max(1 - Math.log10(m.cost/0.03)/Math.log10(3.69/0.03)*.92, .05) : .04
+    m.cost != null ? Math.max(1 - Math.log10(m.cost/0.05)/Math.log10(8.75/0.05)*.92, .05) : .04
   ];
   /* 任务场景权重：[智能, 速度, 成本效益] */
   const SCENARIOS = {

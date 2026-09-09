@@ -1,6 +1,6 @@
 # AI Model Arena · 大模型巅峰竞技场
 
-一个纯单文件、零依赖的大模型评测数据可视化网站，基于 [Artificial Analysis](https://artificialanalysis.ai/) 独立评测体系（Intelligence Index v4.1.1），全方位透视 **17 家厂商 29 个代表模型** 的智能、速度与成本差异。
+一个纯单文件、零依赖的大模型评测数据可视化网站，基于 [Artificial Analysis](https://artificialanalysis.ai/) 独立评测体系（Intelligence Index v4.3），全方位透视 **17 家厂商 30 个代表模型** 的智能、速度与成本差异。新旗舰 **GPT-6 Astra** 空降智能榜，与 **Claude Fable 5.1** 同以 53 分并列登顶，但单任务成本仅为后者的 43%。
 
 🌐 **在线访问**：<https://rigel97.github.io/ai-model-arena/>
 
@@ -25,9 +25,10 @@
 
 ## 📊 数据说明
 
-- 数据来源：Artificial Analysis Intelligence Index v4.1.1（2026 年 9 月 3 日快照），综合 GDPval-AA v2、τ³-Banking、Terminal-Bench v2.1、SciCode、HLE、GPQA Diamond、CritPt、AA-Omniscience、AA-LCR 共 9 项评测
-- 每家厂商精选 1~3 个代表模型，剔除过冷门与智能过低的型号
+- 数据来源：Artificial Analysis Intelligence Index v4.3（2026 年 9 月 9 日快照），综合 AA-Briefcase、GDPval-AA v2、AutomationBench-AA、Terminal-Bench v4.0、SciCode、Humanity's Last Exam、GDP.pdf、CritPt、AA-Omniscience、AA-LCR v1.1 共 10 项评测
+- 每家厂商精选 1~4 个代表模型，剔除过冷门与智能过低的型号
 - 速度 / 成本维度仅展示官方已公布数据的模型，未公布的一律标记为 `null`，不做臆造
+- 本轮看点：Gemini 3.5 Flash-Lite 以 356 t/s 稳居速度榜榜首，InclusionAI Ling 3.0 Flash（298 t/s）首入前三；成本最低为 Xiaomi MiMo-V2.5-Pro（$0.05/任务），最高为 Claude Fable 5（$8.75/任务），相差 175 倍
 - 「综合战力」为本站自定义的加权评分（非官方指标），权重随任务场景切换
 
 ## 🚀 本地运行
