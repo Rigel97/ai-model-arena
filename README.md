@@ -1,56 +1,56 @@
-# AI Model Arena · 大模型巅峰竞技场
+# AI Model Arena
 
-一个纯单文件、零依赖的大模型评测数据可视化网站，基于 [Artificial Analysis](https://artificialanalysis.ai/) 独立评测体系（Intelligence Index v4.3），全方位透视 **17 家厂商 30 个代表模型** 的智能、速度与成本差异。新旗舰 **GPT-6 Astra** 空降智能榜，与 **Claude Fable 5.1** 同以 53 分并列登顶，但单任务成本仅为后者的 43%。
+A single-file, zero-dependency data-visualization site for LLM benchmarks, built on the independent [Artificial Analysis](https://artificialanalysis.ai/) evaluation system (Intelligence Index v4.3). It gives you a full view of how **30 representative models from 17 providers** compare on intelligence, speed, and cost. The new flagship **GPT-6 Astra** lands straight at the top of the intelligence leaderboard, tied with **Claude Fable 5.1** at 53 points — but at only 43% of the latter's per-task cost.
 
-🌐 **在线访问**：<https://rigel97.github.io/ai-model-arena/>
+🌐 **Live site**: <https://rigel97.github.io/ai-model-arena/>
 
-## ✨ 功能特性
+## ✨ Features
 
-- **智能指数排行榜** —— 前三名 3D 倾斜领奖台（鼠标悬停有视差效果），完整榜单为流光扫过动画的渐变条形图
-- **生成速度竞速榜** —— 每秒输出 Token 数对比
-- **单任务成本榜** —— 每个智能指数任务的加权平均成本（USD）
-- **性价比象限图** —— Canvas 手绘散点图：智能 × 成本（对数刻度），气泡大小代表速度，自动绘制 Pareto 性价比前沿，悬停查看详情
-- **巅峰对决 1v1** —— 任选两个模型进行三维度雷达对比（智能 / 速度 / 成本效益），支持按任务场景切换综合战力权重：
-  - 均衡通用（智能 40% · 速度 25% · 成本 35%）
-  - 日常对话（智能 20% · 速度 40% · 成本 40%）
-  - 大型工程（智能 65% · 速度 10% · 成本 25%）
-  - 科研项目（智能 90% · 速度 5% · 成本 5%）
+- **Intelligence Index leaderboard** — a 3D tilted podium for the top three (with a parallax effect on hover); the full ranking as gradient bars with a shimmer-sweep animation
+- **Generation speed chart** — tokens-per-second comparison
+- **Per-task cost chart** — weighted average cost per Intelligence Index task (USD)
+- **Value-for-money quadrant** — a hand-drawn Canvas scatter plot of intelligence × cost (log scale), where bubble size encodes speed; the Pareto frontier is drawn automatically, and hovering shows details
+- **Head-to-head 1v1** — pick any two models for a three-axis radar comparison (intelligence / speed / cost efficiency), with overall-power weights that switch by task scenario:
+  - Balanced general use (intelligence 40% · speed 25% · cost 35%)
+  - Everyday chat (intelligence 20% · speed 40% · cost 40%)
+  - Large-scale engineering (intelligence 65% · speed 10% · cost 25%)
+  - Research projects (intelligence 90% · speed 5% · cost 5%)
 
-## 🎨 动态特效
+## 🎨 Visual effects
 
-- 全屏交互式粒子网络背景（鼠标靠近粒子会被推开）
-- 漂浮星云光斑 + 鼠标跟随辉光 + 科技网格叠加
-- 滚动触发显现动画、数字滚动计数、条形图交错生长
-- 17 家厂商专属配色，全站图表色彩联动
+- Full-screen interactive particle-network background (particles are pushed away as the cursor approaches)
+- Floating nebula glows, a cursor-following halo, and a tech-grid overlay
+- Scroll-triggered reveal animations, rolling number counters, staggered bar-chart growth
+- A dedicated color per provider (17 in total), linked across every chart on the site
 
-## 📊 数据说明
+## 📊 Data notes
 
-- 数据来源：Artificial Analysis Intelligence Index v4.3（2026 年 9 月 9 日快照），综合 AA-Briefcase、GDPval-AA v2、AutomationBench-AA、Terminal-Bench v4.0、SciCode、Humanity's Last Exam、GDP.pdf、CritPt、AA-Omniscience、AA-LCR v1.1 共 10 项评测
-- 每家厂商精选 1~4 个代表模型，剔除过冷门与智能过低的型号
-- 速度 / 成本维度仅展示官方已公布数据的模型，未公布的一律标记为 `null`，不做臆造
-- 本轮看点：Gemini 3.5 Flash-Lite 以 356 t/s 稳居速度榜榜首，InclusionAI Ling 3.0 Flash（298 t/s）首入前三；成本最低为 Xiaomi MiMo-V2.5-Pro（$0.05/任务），最高为 Claude Fable 5（$8.75/任务），相差 175 倍
-- 「综合战力」为本站自定义的加权评分（非官方指标），权重随任务场景切换
+- Source: Artificial Analysis Intelligence Index v4.3 (snapshot from Sep 9, 2026), which aggregates 10 benchmarks — AA-Briefcase, GDPval-AA v2, AutomationBench-AA, Terminal-Bench v4.0, SciCode, Humanity's Last Exam, GDP.pdf, CritPt, AA-Omniscience, and AA-LCR v1.1
+- 1–4 representative models per provider; overly niche and low-intelligence models are excluded
+- Speed / cost figures are shown only for models with officially published data; anything unpublished is marked `null` — nothing is made up
+- Highlights of this snapshot: Gemini 3.5 Flash-Lite keeps the speed crown at 356 t/s, with InclusionAI Ling 3.0 Flash (298 t/s) entering the top three for the first time; the cheapest model is Xiaomi MiMo-V2.5-Pro ($0.05/task) and the most expensive is Claude Fable 5 ($8.75/task) — a 175× spread
+- "Overall power" is this site's own weighted score (not an official metric); the weights change with the task scenario
 
-## 🚀 本地运行
+## 🚀 Run locally
 
-无需任何构建，直接用浏览器打开即可：
+No build step whatsoever — just open it in a browser:
 
 ```bash
 open index.html        # macOS
-# 或双击 index.html
+# or simply double-click index.html
 ```
 
-## 🛠 技术栈
+## 🛠 Tech stack
 
-纯原生 HTML / CSS / JavaScript 单文件实现，无任何框架与构建依赖。图表均为 Canvas 手绘（散点图、雷达图、粒子背景），字体通过 Google Fonts CDN 加载（离线时自动回退系统字体）。
+A single file of plain HTML / CSS / JavaScript — no frameworks, no build dependencies. Every chart is hand-drawn on Canvas (scatter, radar, particle background); fonts load from the Google Fonts CDN (with automatic system-font fallback offline).
 
-## 📁 项目结构
+## 📁 Project structure
 
 ```
 ai-model-arena/
-└── index.html    # 全部页面结构、样式与逻辑
+└── index.html    # all page structure, styles, and logic
 ```
 
-## ⚠️ 免责声明
+## ⚠️ Disclaimer
 
-本页面仅用于数据可视化演示，评分为 Artificial Analysis 第三方独立评测结果，仅供参考。
+This page is a data-visualization demo. All scores are third-party independent results from Artificial Analysis and are for reference only.
