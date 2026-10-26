@@ -1,6 +1,6 @@
 # AI Model Arena
 
-A single-file, zero-dependency data-visualization site for LLM benchmarks, built on the independent [Artificial Analysis](https://artificialanalysis.ai/) evaluation system (Intelligence Index v4.3). It gives you a full view of how **30 representative models from 17 providers** compare on intelligence, speed, and cost. The new flagship **GPT-6 Astra** lands straight at the top of the intelligence leaderboard, tied with **Claude Fable 5.1** at 53 points — but at only 43% of the latter's per-task cost.
+A single-file, zero-dependency data-visualization site for LLM benchmarks, built on the independent [Artificial Analysis](https://artificialanalysis.ai/) evaluation system (Intelligence Index v4.3.2). It gives you a full view of how **30 flagship models from 15 providers** compare on intelligence, speed, and cost. The new flagship **Claude Opus 5.5** tops the intelligence leaderboard at 58 points, with **Claude Sonnet 5.5** and Meta's **Muse Wonder Full** tied at 56 — while Xiaomi's **MiMo-V2.6-Pro** stands out at 46 points for just $0.13 per task.
 
 🌐 **Live site**: <https://rigel97.github.io/ai-model-arena/>
 
@@ -21,14 +21,14 @@ A single-file, zero-dependency data-visualization site for LLM benchmarks, built
 - Full-screen interactive particle-network background (particles are pushed away as the cursor approaches)
 - Floating nebula glows, a cursor-following halo, and a tech-grid overlay
 - Scroll-triggered reveal animations, rolling number counters, staggered bar-chart growth
-- A dedicated color per provider (17 in total), linked across every chart on the site
+- A dedicated color per provider (15 in total), linked across every chart on the site
 
 ## 📊 Data notes
 
-- Source: Artificial Analysis Intelligence Index v4.3 (snapshot from Sep 9, 2026), which aggregates 10 benchmarks — AA-Briefcase, GDPval-AA v2, AutomationBench-AA, Terminal-Bench v4.0, SciCode, Humanity's Last Exam, GDP.pdf, CritPt, AA-Omniscience, and AA-LCR v1.1
-- 1–4 representative models per provider; overly niche and low-intelligence models are excluded
+- Source: Artificial Analysis Intelligence Index v4.3.2 (snapshot from Oct 26, 2026), which aggregates 10 benchmarks — AA-Briefcase v1.1, GDPval-AA v2.1, AutomationBench-AA, Terminal-Bench 4.0, SciCode, Humanity's Last Exam, GDP.pdf, CritPt, AA-Omniscience, and AA-LCR v1.1
+- 1–4 flagship in-market models per provider; outdated, niche, and non-core models are excluded
 - Speed / cost figures are shown only for models with officially published data; anything unpublished is marked `null` — nothing is made up
-- Highlights of this snapshot: Gemini 3.5 Flash-Lite keeps the speed crown at 356 t/s, with InclusionAI Ling 3.0 Flash (298 t/s) entering the top three for the first time; the cheapest model is Xiaomi MiMo-V2.5-Pro ($0.05/task) and the most expensive is Claude Fable 5 ($8.75/task) — a 175× spread
+- Highlights of this snapshot: NVIDIA Nemotron 3.5 Super VL takes the speed crown at 458.8 t/s, followed by Claude Haiku 5.5 (234.2 t/s) and Step 5 Preview (220.2 t/s); the cheapest model is Xiaomi MiMo-V2.6-Flash ($0.06/task) and the most expensive is Claude Fable 5.1 ($7.63/task) — a 127× spread; the open-weights field is led by Kimi K3.1 Pro (55 points) and MiMo-V2.6-Pro (46 points / $0.13)
 - "Overall power" is this site's own weighted score (not an official metric); the weights change with the task scenario
 
 ## 🚀 Run locally
