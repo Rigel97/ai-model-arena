@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Model Arena · 大模型巅峰对决</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- 异步加载字体：不阻塞首屏渲染（display=swap 保证文字先用系统字体兜底） -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{
   --bg:#05060f;
@@ -35,18 +38,21 @@ body{
 
 /* ---------- 背景层 ---------- */
 #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
-.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.28;z-index:0;pointer-events:none;animation:orbFloat 18s ease-in-out infinite alternate}
-.orb1{width:520px;height:520px;background:#3b2d8f;top:-160px;left:-120px}
-.orb2{width:460px;height:460px;background:#0e5f6e;top:30%;right:-160px;animation-delay:-6s}
-.orb3{width:420px;height:420px;background:#7a2d6b;bottom:-140px;left:28%;animation-delay:-12s}
+/* 用径向渐变模拟柔光，替代 filter:blur(90px)（模糊滤镜合成开销大，是首屏卡顿来源之一） */
+.orb{position:fixed;border-radius:50%;opacity:.38;z-index:0;pointer-events:none;animation:orbFloat 18s ease-in-out infinite alternate;will-change:transform}
+.orb1{width:560px;height:560px;background:radial-gradient(circle,#3b2d8f 0%,rgba(59,45,143,0) 66%);top:-190px;left:-160px}
+.orb2{width:500px;height:500px;background:radial-gradient(circle,#0e5f6e 0%,rgba(14,95,110,0) 66%);top:28%;right:-190px;animation-delay:-6s}
+.orb3{width:460px;height:460px;background:radial-gradient(circle,#7a2d6b 0%,rgba(122,45,107,0) 66%);bottom:-170px;left:26%;animation-delay:-12s}
 @keyframes orbFloat{
   0%{transform:translate(0,0) scale(1)}
   100%{transform:translate(70px,50px) scale(1.15)}
 }
 #cursor-glow{
-  position:fixed;width:500px;height:500px;border-radius:50%;
+  position:fixed;left:0;top:0;width:500px;height:500px;border-radius:50%;
   background:radial-gradient(circle,rgba(103,232,249,.07),transparent 60%);
-  pointer-events:none;z-index:1;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:1;
+  /* 用 transform 定位（只触发合成，不触发 paint）；初始移出屏幕避免加载时闪现 */
+  transform:translate3d(-600px,-600px,0);will-change:transform;
   transition:opacity .3s;
 }
 .grid-overlay{
@@ -129,7 +135,8 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
   background:linear-gradient(90deg,#67e8f9,#a78bfa 40%,#f472b6 75%,#fbbf24);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   background-size:250% 100%;animation:gradShift 6s linear infinite;
-  filter:drop-shadow(0 0 34px rgba(167,139,250,.45));
+  /* 去掉 drop-shadow 滤镜：渐变位移动画本身每帧都要重绘文字，
+     再叠加 drop-shadow 会让大号标题每帧都经过一次滤镜处理 */
 }
 .hero-sub{
   margin-top:26px;color:var(--dim);font-size:clamp(14px,1.6vw,17px);max-width:620px;line-height:2;
@@ -143,8 +150,8 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
 }
 .hstat{
   min-width:150px;padding:20px 28px;border-radius:18px;
-  background:var(--panel);border:1px solid var(--panel-border);
-  backdrop-filter:blur(10px);transition:transform .35s,box-shadow .35s;
+  background:rgba(12,15,30,.55);border:1px solid var(--panel-border);
+  transition:transform .35s,box-shadow .35s;
 }
 .hstat:hover{transform:translateY(-6px);box-shadow:0 14px 44px rgba(103,232,249,.14)}
 .hstat .num{font-family:'Orbitron',monospace;font-size:34px;font-weight:700;color:#fff}
@@ -204,8 +211,10 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
 
 /* ---------- 条形榜 ---------- */
 .board{
-  border-radius:24px;background:var(--panel);border:1px solid var(--panel-border);
-  padding:34px 34px 22px;backdrop-filter:blur(12px);
+  /* 大面积 backdrop-filter 叠加在逐帧动画的粒子 canvas 上，会每帧强制重新模糊，
+     是滚动掉帧的主因之一；改用半透明实色背景保证可读性 */
+  border-radius:24px;background:rgba(12,15,30,.72);border:1px solid var(--panel-border);
+  padding:34px 34px 22px;
   box-shadow:0 30px 80px rgba(0,0,0,.35);
 }
 .brow{
@@ -228,11 +237,14 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
   transition:width 1.3s cubic-bezier(.22,1,.36,1);
   box-shadow:0 0 16px currentColor;
 }
+/* shimmer 仅在悬停该行时播放：3 个榜共 90 个无限循环渐变动画，
+   每帧都在强制重绘，滚动时是显著的卡顿来源 */
 .brow .fill::after{
   content:'';position:absolute;inset:0;border-radius:99px;
   background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);
-  background-size:200% 100%;animation:shimmer 2.4s linear infinite;
+  background-size:200% 100%;opacity:0;transition:opacity .3s;
 }
+.brow:hover .fill::after{opacity:1;animation:shimmer 2.4s linear infinite}
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 .brow .val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;text-align:right}
 .board .note{font-size:11.5px;color:var(--dim);margin-top:16px;letter-spacing:.5px}
@@ -244,8 +256,8 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
 
 /* ---------- 散点图 ---------- */
 .chart-wrap{
-  position:relative;border-radius:24px;background:var(--panel);border:1px solid var(--panel-border);
-  padding:26px;backdrop-filter:blur(12px);box-shadow:0 30px 80px rgba(0,0,0,.35);
+  position:relative;border-radius:24px;background:rgba(12,15,30,.72);border:1px solid var(--panel-border);
+  padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.35);
 }
 #scatter{width:100%;height:560px;display:block}
 #tooltip{
@@ -263,8 +275,8 @@ section{max-width:1180px;margin:0 auto;padding:110px 32px 40px}
 
 /* ---------- 对比 ---------- */
 .compare-panel{
-  border-radius:24px;background:var(--panel);border:1px solid var(--panel-border);
-  padding:36px;backdrop-filter:blur(12px);box-shadow:0 30px 80px rgba(0,0,0,.35);
+  border-radius:24px;background:rgba(12,15,30,.72);border:1px solid var(--panel-border);
+  padding:36px;box-shadow:0 30px 80px rgba(0,0,0,.35);
   display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;
 }
 @media(max-width:900px){.compare-panel{grid-template-columns:1fr}}
@@ -533,41 +545,55 @@ const colorOf = m => ORG_COLORS[m.org] || '#94a3b8';
 (() => {
   const cv = document.getElementById('bg-canvas'), ctx = cv.getContext('2d');
   let W, H, pts = [], mouse = {x:-9999, y:-9999};
-  const N = 90, LINK = 130;
+  const N = 90, LINK = 130, LINK2 = LINK*LINK, REPEL2 = 140*140;
   function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
   resize(); addEventListener('resize', resize);
-  addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  for (let i = 0; i < N; i++) pts.push({
-    x: Math.random()*innerWidth, y: Math.random()*innerHeight,
-    vx: (Math.random()-.5)*.35, vy: (Math.random()-.5)*.35,
-    r: Math.random()*1.8+.6, hue: Math.random()>.5 ? 190 : 265
-  });
+  addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, {passive:true});
+  for (let i = 0; i < N; i++){
+    const hue = Math.random()>.5 ? 190 : 265;
+    pts.push({
+      x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+      vx: (Math.random()-.5)*.35, vy: (Math.random()-.5)*.35,
+      r: Math.random()*1.8+.6,
+      fill: `hsla(${hue},85%,72%,.55)` /* 预生成填充色，避免每帧拼字符串 */
+    });
+  }
   (function tick(){
     ctx.clearRect(0,0,W,H);
+    const mx = mouse.x, my = mouse.y;
     for (const p of pts){
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0 || p.x > W) p.vx *= -1;
       if (p.y < 0 || p.y > H) p.vy *= -1;
-      const dm = Math.hypot(p.x-mouse.x, p.y-mouse.y);
-      if (dm < 140){ p.x += (p.x-mouse.x)/dm*.6; p.y += (p.y-mouse.y)/dm*.6; }
+      if (mx > -999){ /* 用平方距离比较代替 Math.hypot，热循环里避免开方 */
+        const dx = p.x-mx, dy = p.y-my, d2 = dx*dx+dy*dy;
+        if (d2 < REPEL2 && d2 > .01){ const d = Math.sqrt(d2); p.x += dx/d*.6; p.y += dy/d*.6; }
+      }
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7);
-      ctx.fillStyle = `hsla(${p.hue},85%,72%,.55)`; ctx.fill();
+      ctx.fillStyle = p.fill; ctx.fill();
     }
     for (let i = 0; i < N; i++) for (let j = i+1; j < N; j++){
-      const a = pts[i], b = pts[j], d = Math.hypot(a.x-b.x, a.y-b.y);
-      if (d < LINK){
+      const a = pts[i], b = pts[j], dx = a.x-b.x, dy = a.y-b.y, d2 = dx*dx+dy*dy;
+      if (d2 < LINK2){
         ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
-        ctx.strokeStyle = `rgba(140,160,255,${(1-d/LINK)*.14})`; ctx.lineWidth = 1; ctx.stroke();
+        ctx.strokeStyle = `rgba(140,160,255,${(1-Math.sqrt(d2)/LINK)*.14})`; ctx.lineWidth = 1; ctx.stroke();
       }
     }
     requestAnimationFrame(tick);
   })();
 })();
 
-/* 鼠标辉光 */
+/* 鼠标辉光：rAF 合帧 + transform 定位（left/top 每次都触发 paint，transform 只触发合成） */
 (() => {
   const g = document.getElementById('cursor-glow');
-  addEventListener('mousemove', e => { g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px'; });
+  let x = -600, y = -600, raf = 0;
+  addEventListener('mousemove', e => {
+    x = e.clientX; y = e.clientY;
+    if (!raf) raf = requestAnimationFrame(() => {
+      raf = 0;
+      g.style.transform = `translate3d(${x-250}px,${y-250}px,0)`;
+    });
+  }, {passive:true});
 })();
 
 /* ==================== 数字滚动 ==================== */
@@ -791,7 +817,9 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     if (e.isIntersecting){ resize(); animate(); so.disconnect(); }
   }), {threshold:.25});
   so.observe(cv);
-  addEventListener('resize', () => { resize(); draw(); });
+  /* resize 防抖：拖动窗口时避免连续全量重绘 */
+  let rzT;
+  addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { resize(); draw(); }, 120); });
 
   /* 鼠标悬停 + 触屏点按共用同一套拾取逻辑 */
   function handlePoint(clientX, clientY){
@@ -954,7 +982,8 @@ document.getElementById('cost-board').insertAdjacentHTML('beforeend',
     if (e.isIntersecting){ update(); co.disconnect(); }
   }), {threshold:.25});
   co.observe(cv);
-  addEventListener('resize', draw);
+  let rzT2;
+  addEventListener('resize', () => { clearTimeout(rzT2); rzT2 = setTimeout(draw, 120); });
 })();
 </script>
 </body>
